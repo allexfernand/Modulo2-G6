@@ -6,11 +6,50 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 from pathlib import Path
+from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+    silhouette_score,
+)
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 BASE_DIR = Path(__file__).resolve().parent
+
+CLUSTER_NAMES = {
+    0: "C0 · Recém-chegado em fuga",
+    1: "C1 · Leal anual",
+    2: "C2 · Engajado mensal",
+    3: "C3 · Médio em trânsito",
+}
+
+HEATMAP_FEATURES = [
+    "Lifetime",
+    "Avg_class_frequency_current_month",
+    "Age",
+    "Contract_period",
+    "Month_to_end_contract",
+    "Avg_class_frequency_total",
+    "Group_visits",
+    "Promo_friends",
+    "Partner",
+]
+
+HEATMAP_LABELS = {
+    "Lifetime": "Tempo como cliente",
+    "Avg_class_frequency_current_month": "Frequência atual",
+    "Age": "Idade",
+    "Contract_period": "Duração contrato",
+    "Month_to_end_contract": "Meses até vencer",
+    "Avg_class_frequency_total": "Frequência histórica",
+    "Group_visits": "Desafios em grupo",
+    "Promo_friends": "Indicação de amigos",
+    "Partner": "Convênio empresarial",
+}
 MODEL_PATH = BASE_DIR / "model.pkl"
 
 app = FastAPI(title="Gym Churn Prediction API")
@@ -450,6 +489,91 @@ async def analyze_uploaded_csv(file: UploadFile = File(...)):
         "survival_curve": week5_extensions["survival_curve"],
         "cohort_churn": week5_extensions["cohort_churn"],
         "diagnostic_segments": week5_extensions["diagnostic_segments"],
+    }
+
+
+@app.post("/segment")
+async def segment_dataset(file: UploadFile = File(...)):
+    uploaded_df = await read_uploaded_csv(file)
+    df, _ = clean_churn_dataset(uploaded_df)
+
+    if len(df) < 20:
+        raise HTTPException(
+            status_code=400,
+            detail="CSV com poucos registros válidos para segmentação após limpeza.",
+        )
+
+    X = df[FEATURES].copy()
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    kmeans = KMeans(n_clusters=4, random_state=42, n_init=30)
+    labels = kmeans.fit_predict(X_scaled)
+
+    df = df.copy()
+    df["Cluster"] = labels
+
+    sil = float(silhouette_score(X_scaled, labels))
+    inertia = float(kmeans.inertia_)
+
+    cluster_stats = []
+    cluster_means: dict[str, dict] = {}
+    for cid in range(4):
+        mask = df["Cluster"] == cid
+        cdf = df[mask]
+        churn_rate = float(cdf["Churn"].mean()) if len(cdf) > 0 else 0.0
+        cluster_stats.append({
+            "id": cid,
+            "name": CLUSTER_NAMES[cid],
+            "count": int(len(cdf)),
+            "percentage": round(float(len(cdf) / len(df)), 4),
+            "churn_rate": round(churn_rate, 4),
+        })
+        means = {}
+        for feat in HEATMAP_FEATURES:
+            if feat in cdf.columns:
+                means[feat] = round(float(cdf[feat].mean()), 3)
+        cluster_means[str(cid)] = means
+
+    # Normalise values to 0-1 for heatmap colouring
+    heatmap_normalized: dict[str, list] = {}
+    for feat in HEATMAP_FEATURES:
+        vals = [cluster_means[str(c)].get(feat, 0.0) for c in range(4)]
+        min_v, max_v = min(vals), max(vals)
+        span = max_v - min_v if max_v != min_v else 1.0
+        heatmap_normalized[feat] = [round((v - min_v) / span, 3) for v in vals]
+
+    # RF churn probability per cluster (only when model is trained)
+    rf_by_cluster = []
+    if model is not None:
+        for cid in range(4):
+            mask = df["Cluster"] == cid
+            cdf = df[mask]
+            if len(cdf) > 0:
+                proba = model.predict_proba(cdf[FEATURES])[:, 1]
+                n = len(proba)
+                rf_by_cluster.append({
+                    "cluster_id": cid,
+                    "name": CLUSTER_NAMES[cid],
+                    "avg_churn_prob": round(float(proba.mean()), 4),
+                    "high_risk_pct": round(float((proba >= 0.7).sum() / n), 4),
+                    "med_risk_pct": round(
+                        float(((proba >= 0.4) & (proba < 0.7)).sum() / n), 4
+                    ),
+                    "low_risk_pct": round(float((proba < 0.4).sum() / n), 4),
+                })
+
+    return {
+        "status": "segmented",
+        "n_clusters": 4,
+        "inertia": round(inertia, 2),
+        "silhouette_score": round(sil, 4),
+        "cluster_stats": cluster_stats,
+        "cluster_means": cluster_means,
+        "heatmap_features": HEATMAP_FEATURES,
+        "heatmap_labels": HEATMAP_LABELS,
+        "heatmap_normalized": heatmap_normalized,
+        "rf_by_cluster": rf_by_cluster,
     }
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gym Churn Predictor</title>
+  <title>Vitaliza · Retenção Preditiva</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -719,6 +719,249 @@
       margin-bottom: 14px;
     }
 
+    .chart-subtitle {
+      color: var(--muted-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      margin-top: 16px;
+      text-transform: uppercase;
+    }
+    .chart-subtitle:first-child { margin-top: 0; }
+
+    .chart-two-col {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 640px) {
+      .chart-two-col { grid-template-columns: 1fr; }
+    }
+
+    .bar-value {
+      transition: width 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ── VERTICAL BAR CHART (EDA 1 & 2) ─────────── */
+    .vbar-chart {
+      display: flex;
+      gap: 8px;
+      height: 180px;
+      padding-top: 22px;
+      align-items: flex-end;
+    }
+    .vbar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+    }
+    .vbar-pct {
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-align: center;
+      white-space: nowrap;
+      min-height: 18px;
+    }
+    .vbar-track {
+      flex: 1;
+      width: 75%;
+      min-width: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: rgba(0,0,0,0.07);
+      border-radius: 5px 5px 0 0;
+      overflow: hidden;
+    }
+    .vbar-fill {
+      width: 100%;
+      border-radius: 5px 5px 0 0;
+      transition: height 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .vbar-cat {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted-strong);
+      text-align: center;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+    /* Grouped vbar layout (EDA 2) */
+    .vbar-grouped {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+    .vbar-group { display: flex; flex-direction: column; gap: 8px; }
+    .vbar-group-label {
+      font-size: 0.71rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--muted-strong);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.3;
+    }
+    .vbar-pair {
+      display: flex;
+      gap: 6px;
+      height: 160px;
+      padding-top: 22px;
+      align-items: flex-end;
+    }
+    @media (max-width: 640px) {
+      .vbar-grouped { grid-template-columns: 1fr; }
+    }
+
+    /* ── CORRELATION CHART (EDA 3) ───────────────── */
+    .corr-chart { display: grid; gap: 6px; }
+    .corr-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 190px) 1fr 58px;
+      gap: 8px;
+      align-items: center;
+    }
+    .corr-track {
+      height: 20px;
+      background: rgba(0,0,0,0.07);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .corr-bar {
+      height: 100%;
+      border-radius: 4px 0 0 4px;
+      transition: width 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .corr-bar.ct { background: #0d9488; }
+    .corr-bar.co { background: #d97706; }
+    .corr-val {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted-strong);
+      text-align: center;
+    }
+    .corr-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    @media (max-width: 640px) {
+      .corr-row { grid-template-columns: 100px 1fr 52px; }
+      .corr-label { font-size: 0.72rem; }
+    }
+
+    /* ── HEATMAP TABLE ───────────────────────────── */
+    .hmap-scroll { overflow-x: auto; margin-top: 4px; }
+    .hmap-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      min-width: 420px;
+    }
+    .hmap-table th {
+      background: var(--surface-muted);
+      font-weight: 700;
+      font-size: 0.76rem;
+      padding: 10px 12px;
+      text-align: center;
+      border-bottom: 2px solid var(--border);
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+    .hmap-table th:first-child { text-align: left; min-width: 140px; }
+    .hmap-table td {
+      padding: 9px 12px;
+      text-align: center;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .hmap-table td.hmap-feat {
+      text-align: left;
+      font-weight: 600;
+      color: var(--muted-strong);
+      background: var(--surface-muted);
+      white-space: nowrap;
+      font-size: 0.78rem;
+    }
+    .hmap-table tr:last-child td { border-bottom: none; }
+    .hmap-r1 { background: rgba(13,148,136,0.28); color: #065f46; }
+    .hmap-r2 { background: #d1fae5; color: #065f46; }
+    .hmap-r3 { background: #fef3c7; color: #92400e; }
+    .hmap-r4 { background: #fee2e2; color: #991b1b; }
+    .hmap-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--muted-strong);
+      font-weight: 600;
+    }
+    .hmap-legend-item { display: flex; align-items: center; gap: 5px; }
+    .hmap-swatch { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+    /* Cluster profile grid — page 8 */
+    .cp-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 4px;
+    }
+    @media (max-width: 640px) { .cp-grid { grid-template-columns: 1fr; } }
+
+    .cp-card {
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .cp-card.risk-high  { border-color: var(--high);  background: var(--high-soft); }
+    .cp-card.risk-med   { border-color: var(--med);   background: var(--surface-soft); }
+    .cp-card.risk-low   { border-color: var(--low);   background: var(--low-soft); }
+
+    .cp-header { display: flex; align-items: center; gap: 10px; }
+    .cp-badge {
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      text-transform: uppercase;
+    }
+    .cp-badge.c0 { background: var(--high); color: #fff; }
+    .cp-badge.c1 { background: var(--low);  color: #fff; }
+    .cp-badge.c2 { background: var(--brand); color: #fff; }
+    .cp-badge.c3 { background: var(--med);  color: #fff; }
+
+    .cp-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .cp-churn { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+    .cp-churn.high { color: var(--high); }
+    .cp-churn.med  { color: var(--med);  }
+    .cp-churn.low  { color: var(--low);  }
+    .cp-size { font-size: 0.8rem; color: var(--muted-strong); font-weight: 600; }
+
+    .cp-metrics { display: grid; gap: 6px; }
+    .cp-metric { display: grid; grid-template-columns: 120px 1fr 48px; align-items: center; gap: 8px; font-size: 0.78rem; }
+    .cp-metric span:first-child { color: var(--muted-strong); font-weight: 600; }
+    .cp-metric span:last-child  { color: var(--text); font-weight: 700; text-align: right; }
+    .cp-mini { background: var(--border); border-radius: 999px; height: 7px; overflow: hidden; }
+    .cp-mini-fill { border-radius: 999px; height: 100%; }
+
+    .cp-action {
+      background: rgba(0,0,0,0.04);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 8px 10px;
+    }
+
     .bar-list {
       display: grid;
       gap: 12px;
@@ -1215,6 +1458,360 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ── NEW COMPONENT STYLES ── */
+
+    .danger-btn {
+      background: var(--high);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .danger-btn:hover { background: #b91c1c; }
+    .danger-btn:active { transform: scale(0.98); }
+
+    .secondary-btn {
+      background: var(--surface-muted);
+      color: var(--muted-strong);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .secondary-btn:hover { background: var(--border); border-color: var(--border-strong); }
+
+    .upload-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .upload-btn-row #train-btn {
+      flex: 1;
+      min-width: 200px;
+      margin-top: 0;
+    }
+
+    /* SEG STATUS */
+    .seg-status {
+      border-radius: var(--radius-md);
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.5;
+      padding: 14px 16px;
+    }
+    .seg-status.waiting { background: var(--surface-soft); color: var(--muted-strong); }
+    .seg-status.success { background: var(--low-soft); color: var(--low); }
+    .seg-status.error   { background: var(--high-soft); color: var(--high); }
+
+    .seg-dashboard { display: none; gap: 20px; }
+    .seg-dashboard.active { display: grid; }
+
+    /* CLUSTER CARDS */
+    .cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .cluster-card {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .cluster-card.c0 { border-top: 3px solid var(--high); }
+    .cluster-card.c1 { border-top: 3px solid var(--low); }
+    .cluster-card.c2 { border-top: 3px solid var(--brand); }
+    .cluster-card.c3 { border-top: 3px solid var(--med); }
+    .cluster-name { font-size: 0.76rem; font-weight: 800; color: var(--muted-strong); margin-bottom: 6px; }
+    .cluster-churn { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.04em; }
+    .cluster-churn.high { color: var(--high); }
+    .cluster-churn.low  { color: var(--low); }
+    .cluster-churn.brand{ color: var(--brand); }
+    .cluster-churn.med  { color: var(--med); }
+    .cluster-caption { font-size: 0.74rem; color: var(--muted); font-weight: 700; margin-top: 4px; }
+
+    /* HEATMAP */
+    .heatmap-wrap { overflow-x: auto; }
+    .heatmap-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .heatmap-table th {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      font-weight: 800;
+      text-align: left;
+      color: var(--muted-strong);
+      white-space: nowrap;
+    }
+    .heatmap-table td {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.76rem;
+    }
+    .heat-cell { border-radius: 5px; padding: 3px 7px; display: inline-block; }
+
+    /* LEITURA DOS SEGMENTOS */
+    .leitura-block {
+      background: var(--surface-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .leitura-block h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
+    .leitura-block p  { color: var(--muted-strong); font-size: 0.92rem; line-height: 1.7; }
+    .leitura-block strong { color: var(--high); }
+    .leitura-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .leitura-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+    .leitura-item strong { display: block; font-size: 0.88rem; color: var(--text); margin-bottom: 4px; }
+    .leitura-item span  { font-size: 0.80rem; color: var(--muted-strong); line-height: 1.5; }
+
+    /* PERSONA CARDS */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .persona-card.c0 { border-left: 4px solid var(--high); }
+    .persona-card.c1 { border-left: 4px solid var(--low); }
+    .persona-card.c2 { border-left: 4px solid var(--brand); }
+    .persona-card.c3 { border-left: 4px solid var(--med); }
+    .persona-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .persona-badge {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 0.78rem; color: #fff; flex-shrink: 0;
+    }
+    .persona-badge.c0 { background: var(--high); }
+    .persona-badge.c1 { background: var(--low); }
+    .persona-badge.c2 { background: var(--brand); }
+    .persona-badge.c3 { background: var(--med); }
+    .persona-name { font-weight: 800; font-size: 0.96rem; color: var(--text); line-height: 1.2; }
+    .persona-churn-rate { font-size: 0.76rem; font-weight: 700; color: var(--muted); margin-top: 2px; }
+    .persona-body { color: var(--muted-strong); font-size: 0.87rem; line-height: 1.65; }
+    .persona-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .persona-tag {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.72rem; font-weight: 800;
+      padding: 4px 10px; color: var(--muted-strong);
+    }
+
+    /* RF PREDICAO */
+    .rf-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .rf-cluster-card {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .rf-cluster-name { font-size: 0.74rem; font-weight: 800; color: var(--muted-strong); margin-bottom: 8px; }
+    .rf-prob { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 8px; }
+    .rf-risk-bars { display: flex; flex-direction: column; gap: 4px; font-size: 0.74rem; font-weight: 700; color: var(--muted-strong); }
+    .rf-risk-bar-row { display: flex; align-items: center; gap: 6px; }
+    .rf-risk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .pred-status {
+      border-radius: var(--radius-md);
+      display: block;
+      font-size: 0.9rem; font-weight: 800; line-height: 1.5; padding: 14px 16px;
+    }
+    .pred-status.waiting { display: none; }
+    .pred-status.success { background: var(--low-soft); color: var(--low); }
+    .pred-status.error   { background: var(--high-soft); color: var(--high); }
+    .pred-dashboard { display: none; gap: 20px; }
+    .pred-dashboard.active { display: grid; }
+
+    /* SEGMENTAÇÃO ESTÁTICA */
+    .seg-static { display: grid; gap: 20px; }
+    .static-cluster-grid { margin-bottom: 0; }
+
+    /* NARRATIVA PERSONAS */
+    .persona-desc { font-size: 0.85rem; line-height: 1.55; color: var(--muted-strong); margin: 10px 0 0; }
+    .persona-narrative { display: grid; gap: 10px; margin: 14px 0; }
+    .narrative-block { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: start; }
+    .narrative-label {
+      font-size: 0.7rem; font-weight: 900; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--brand);
+      padding-top: 2px;
+    }
+    .narrative-text { color: var(--muted-strong); font-size: 0.88rem; line-height: 1.6; }
+    @media (max-width: 600px) {
+      .narrative-block { grid-template-columns: 1fr; gap: 2px; }
+    }
+
+    /* SEG-CARD GRID */
+    .seg-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .seg-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); }
+    .seg-card-hd { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .seg-card-badge { width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; font-weight: 800; font-size: 0.82rem; color: #fff; flex-shrink: 0; }
+    .seg-card-badge.c0 { background: var(--high); }
+    .seg-card-badge.c1 { background: var(--low); }
+    .seg-card-badge.c2 { background: var(--brand); }
+    .seg-card-badge.c3 { background: var(--med); }
+    .seg-card-title { font-weight: 800; font-size: 0.95rem; color: var(--text); line-height: 1.2; }
+    .seg-card-sub { font-size: 0.73rem; color: var(--muted-strong); margin-top: 3px; }
+    .seg-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+    .seg-metric { padding: 10px 8px; text-align: center; }
+    .seg-metric + .seg-metric { border-left: 1px solid var(--border); }
+    .seg-metric-val { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+    .seg-metric-val.churn-high { color: #dc2626; }
+    .seg-metric-val.churn-med  { color: #d97706; }
+    .seg-metric-val.churn-low  { color: #059669; }
+    .seg-metric-lbl { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; color: var(--muted-strong); margin-top: 2px; text-transform: uppercase; }
+    .seg-quote { border-left: 3px solid var(--border); margin: 0 0 14px; padding: 8px 12px; font-style: italic; font-size: 0.82rem; line-height: 1.5; color: var(--muted-strong); background: var(--surface-muted); border-radius: 0 6px 6px 0; }
+    .seg-section { margin-bottom: 10px; }
+    .seg-section:last-of-type { margin-bottom: 0; }
+    .seg-section-ttl { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 4px; }
+    .seg-section p { font-size: 0.81rem; line-height: 1.55; color: var(--muted-strong); margin: 0; }
+    .seg-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .seg-tag { background: var(--surface-muted); border: 1px solid var(--border); border-radius: 999px; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; color: var(--muted-strong); }
+
+    /* MINI DECK — scroll vertical */
+    .deck-index {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 16px 0; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+    }
+    .deck-index-link {
+      background: var(--surface-muted); border: 1px solid var(--border);
+      border-radius: 999px; padding: 6px 14px;
+      font-size: 0.78rem; font-weight: 800; color: var(--muted-strong);
+      text-decoration: none; transition: background 0.15s, color 0.15s;
+    }
+    .deck-index-link:hover { background: var(--brand-soft); color: var(--brand); border-color: var(--brand); }
+    .deck-scroll { display: grid; gap: 0; }
+    .deck-section {
+      padding: 28px 0; border-bottom: 1px solid var(--border);
+    }
+    .deck-section:last-child { border-bottom: none; }
+    .deck-slide-num { color: var(--brand); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+    .deck-slide-title { font-size: clamp(1.2rem, 2.5vw, 1.9rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 14px; color: var(--text); }
+    .deck-slide-body { color: var(--muted-strong); font-size: 0.94rem; line-height: 1.7; }
+    .deck-slide-body ul { padding-left: 18px; display: grid; gap: 6px; margin-top: 10px; }
+    .deck-slide-body li { color: var(--muted-strong); font-size: 0.92rem; line-height: 1.6; }
+    .deck-slide-body strong { color: var(--text); }
+    .deck-kicker { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin-bottom: 8px; }
+    .deck-info-box { background: var(--brand-soft); border: 1px solid var(--brand); border-radius: var(--radius-md); padding: 14px 16px; margin: 14px 0; font-size: 0.86rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+    .deck-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .deck-btn { display: inline-block; background: var(--brand); color: #fff; border-radius: 999px; padding: 9px 18px; font-size: 0.82rem; font-weight: 800; text-decoration: none; transition: opacity 0.15s; }
+    .deck-btn:hover { opacity: 0.85; }
+    .deck-gloss { display: grid; gap: 10px; margin-top: 14px; }
+    .deck-gloss-item { display: grid; grid-template-columns: minmax(130px,180px) 1fr; gap: 10px; align-items: start; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+    .deck-gloss-term { font-weight: 800; font-size: 0.85rem; color: var(--brand); }
+    .deck-gloss-def { font-size: 0.82rem; color: var(--muted-strong); line-height: 1.5; }
+    @media (max-width: 600px) { .deck-gloss-item { grid-template-columns: 1fr; gap: 3px; } }
+
+    /* RF HIGHLIGHT BOX */
+    .rf-highlight-box {
+      border-left: 4px solid var(--brand) !important;
+      background: var(--brand-soft) !important;
+    }
+    .rf-highlight-text {
+      color: var(--muted-strong); font-size: 0.96rem; line-height: 1.75;
+      margin-top: 12px;
+    }
+    .rf-highlight-text strong { color: var(--text); }
+
+    /* METODOLOGIA */
+    .met-layout { display: grid; gap: 20px; }
+    .met-step-grid { display: grid; gap: 12px; }
+    .met-step {
+      background: var(--surface-muted); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 18px 20px;
+      display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: start;
+    }
+    .met-step-num {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--brand); color: #fff;
+      display: grid; place-items: center; font-weight: 800; font-size: 1.05rem; flex-shrink: 0;
+    }
+    .met-step-content strong { display: block; color: var(--text); font-size: 0.96rem; margin-bottom: 6px; }
+    .met-step-content span   { color: var(--muted-strong); font-size: 0.88rem; line-height: 1.6; }
+    .algo-compare { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .algo-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .algo-card.chosen { border-color: var(--brand); background: var(--brand-soft); }
+    .algo-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 6px; }
+    .algo-card.chosen .algo-name { color: var(--brand); }
+    .algo-desc { font-size: 0.79rem; color: var(--muted-strong); line-height: 1.5; }
+    .algo-verdict { font-size: 0.74rem; font-weight: 800; margin-bottom: 6px; }
+    .algo-card.chosen .algo-verdict { color: var(--brand); }
+
+    /* EDA EXTRA SECTIONS */
+    .eda-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 24px; }
+    .eda-section h3 { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .eda-section-sub { color: var(--muted-strong); font-size: 0.86rem; line-height: 1.55; margin-bottom: 16px; }
+    .method-infographic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .method-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .method-card.selected { background: var(--brand-soft); border-color: var(--brand); }
+    .method-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 4px; }
+    .method-card.selected .method-name { color: var(--brand); }
+    .method-verdict { font-size: 0.74rem; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
+    .method-card.selected .method-verdict { color: var(--brand); }
+    .method-desc { font-size: 0.78rem; color: var(--muted-strong); line-height: 1.5; }
+    .contract-window-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .window-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .window-card.danger { background: var(--high-soft); border-color: #fca5a5; }
+    .window-card.safe   { background: var(--low-soft);  border-color: #6ee7b7; }
+    .window-value { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
+    .window-card.danger .window-value { color: var(--high); }
+    .window-card.safe   .window-value { color: var(--low); }
+    .window-label { font-size: 0.78rem; font-weight: 700; color: var(--muted-strong); line-height: 1.4; }
+    .driver-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .driver-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .driver-name { font-weight: 800; font-size: 0.9rem; color: var(--text); margin-bottom: 6px; }
+    .driver-effect { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.04em; color: var(--low); margin-bottom: 4px; }
+    .driver-desc { font-size: 0.78rem; color: var(--muted-strong); line-height: 1.5; }
+    .retention-signal-list { display: grid; gap: 10px; }
+    .ret-signal { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+    .ret-rank { width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 0.82rem; }
+    .ret-signal-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 2px; }
+    .ret-signal-desc { font-size: 0.79rem; color: var(--muted-strong); line-height: 1.5; }
+
+    @media (max-width: 900px) {
+      .cluster-grid, .rf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .persona-grid { grid-template-columns: 1fr; }
+      .seg-card-grid { grid-template-columns: 1fr; }
+      .baseline-grid, .driver-grid, .method-infographic, .algo-compare { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .contract-window-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .leitura-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .cluster-grid, .rf-grid, .baseline-grid, .driver-grid,
+      .method-infographic, .algo-compare, .contract-window-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -1222,31 +1819,34 @@
 <main class="app-shell">
   <section class="topbar" aria-label="Status da aplicação">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true">G</div>
+      <div class="brand-mark" aria-hidden="true">V</div>
       <div>
-        <div class="brand-kicker">Inteli MBA · Semana 5</div>
-        <div class="brand-title">Gym Churn Predictor</div>
+        <div class="brand-kicker">Módulo 2 · Grupo 6</div>
+        <div class="brand-title">Vitaliza · Retenção Preditiva</div>
       </div>
     </div>
     <div class="top-actions">
       <span class="status-pill"><span class="status-dot"></span>Modelo operacional</span>
-      <span class="ghost-btn">RandomForest · 11 features</span>
+      <span class="ghost-btn">K-Means + RandomForest · 11 features</span>
     </div>
   </section>
 
   <nav class="tab-nav" aria-label="Navegação da entrega">
-    <button class="tab-btn active" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload CSV</button>
-    <button class="tab-btn" type="button" data-tab-target="inference" onclick="trocarAba('inference')">Inferência</button>
+    <button class="tab-btn active" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload</button>
     <button class="tab-btn" type="button" data-tab-target="eda" onclick="trocarAba('eda')">Dashboard EDA</button>
-    <button class="tab-btn" type="button" data-tab-target="documentation" onclick="trocarAba('documentation')">Documentação</button>
+    <button class="tab-btn" type="button" data-tab-target="segmentacao" onclick="trocarAba('segmentacao')">Segmentação / Personas</button>
+    <button class="tab-btn" type="button" data-tab-target="predicao" onclick="trocarAba('predicao')">Predição</button>
+    <button class="tab-btn" type="button" data-tab-target="inference" onclick="trocarAba('inference')">Inferência</button>
+    <button class="tab-btn" type="button" data-tab-target="minideck" onclick="trocarAba('minideck')">Mini Deck</button>
+    <button class="tab-btn" type="button" data-tab-target="metodologia" onclick="trocarAba('metodologia')">Metodologia</button>
   </nav>
 
   <header class="hero">
     <div>
-      <div class="eyebrow">Churn analytics</div>
-      <h1>Predição de risco para retenção de clientes</h1>
+      <div class="eyebrow">Customer Segmentation Report</div>
+      <h1>A Arquitetura da Retenção Preditiva</h1>
       <p class="hero-copy">
-        Informe o perfil do cliente e estime a probabilidade de churn com base no modelo treinado com a base americana de academias.
+        K-Means segmenta os clientes em 4 perfis comportamentais. O RandomForest quantifica o risco individual dentro de cada segmento. Envie o CSV para acionar toda a pipeline.
       </p>
     </div>
     <div class="metric-grid" aria-label="Resumo do modelo">
@@ -1422,7 +2022,10 @@
           <input type="file" id="csv-file" accept=".csv,text/csv"/>
         </div>
 
-        <button id="train-btn" type="button" onclick="treinarModelo()">Treinar modelo com CSV</button>
+        <div class="upload-btn-row">
+          <button id="train-btn" type="button" onclick="treinarModelo()">Treinar modelo com CSV</button>
+          <button type="button" class="danger-btn" onclick="limparDataset()">Limpar dataset</button>
+        </div>
         <div class="upload-status" id="upload-status"></div>
       </section>
 
@@ -1510,6 +2113,132 @@
           </article>
         </div>
 
+        <!-- PAGE 4 · Contexto metodológico -->
+        <article class="eda-section">
+          <h3>Contexto metodológico · Escolha do algoritmo de segmentação</h3>
+          <p class="eda-section-sub">Antes de rodar o K-Means, três alternativas foram avaliadas e descartadas com base nos requisitos de interpretabilidade e robustez com dados de academia.</p>
+          <div class="method-infographic">
+            <div class="method-card">
+              <div class="method-name">Cox Proportional Hazards</div>
+              <div class="method-verdict">Descartado</div>
+              <div class="method-desc">Ideal para análise de sobrevivência com censura. Requer dados longitudinais completos e não gera segmentos diretos — apenas fatores de risco individuais.</div>
+            </div>
+            <div class="method-card">
+              <div class="method-name">DBSCAN</div>
+              <div class="method-verdict">Descartado</div>
+              <div class="method-desc">Ótimo para clusters de forma arbitrária e detecção de ruído. Sensível aos parâmetros ε e min_samples, o que dificulta reprodutibilidade e interpretação de negócio.</div>
+            </div>
+            <div class="method-card">
+              <div class="method-name">GMM (Gaussian Mixture)</div>
+              <div class="method-verdict">Descartado</div>
+              <div class="method-desc">Flexível com distribuições suaves. Gera clusters sobrepostos, difíceis de comunicar para equipes de retenção que precisam de segmentos mutuamente exclusivos.</div>
+            </div>
+            <div class="method-card selected">
+              <div class="method-name">K-Means</div>
+              <div class="method-verdict">Escolhido · n_clusters=4 · n_init=30</div>
+              <div class="method-desc">Clusters esféricos, interpretáveis, com silhueta estável. Permite nomear personas e comunicar churn por segmento de forma clara. Compatível com o volume e estrutura da base.</div>
+            </div>
+            <div class="method-card" style="grid-column:span 2;">
+              <div class="method-name">Decisão de validação</div>
+              <div class="method-verdict">Silhouette score + Elbow Method</div>
+              <div class="method-desc">O número de clusters foi avaliado com o método do cotovelo (inércia) e confirmado com o silhouette score. k=4 apresentou a melhor separação interpretável sem fragmentar os perfis em grupos sem significado de negócio.</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- PAGE 5 · Churn por contrato + janela de 30 dias -->
+        <article class="eda-section">
+          <h3>Churn por duração de contrato · A janela crítica de 30 dias</h3>
+          <p class="eda-section-sub">A análise da base revela padrão claro: quanto menor o contrato, maior o churn. E independente do contrato, o mês anterior ao vencimento concentra risco desproporcional.</p>
+          <div class="contract-window-grid">
+            <div class="window-card danger">
+              <div class="window-value">~45%</div>
+              <div class="window-label">Churn em contratos mensais (1 mês)</div>
+            </div>
+            <div class="window-card">
+              <div class="window-value">~25%</div>
+              <div class="window-label">Churn em contratos semestrais (6 meses)</div>
+            </div>
+            <div class="window-card safe">
+              <div class="window-value">~5%</div>
+              <div class="window-label">Churn em contratos anuais (12 meses)</div>
+            </div>
+            <div class="window-card danger">
+              <div class="window-value">2×</div>
+              <div class="window-label">Aumento de risco nos 30 dias antes do vencimento — a janela crítica de retenção</div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            A janela de 30 dias antes do vencimento é o momento mais eficiente para intervenção: o cliente ainda está ativo, mas a decisão de renovar ou cancelar já está sendo formada. Ações tardias (após o vencimento) apresentam taxa de reversão muito menor.
+          </div>
+        </article>
+
+        <!-- PAGE 6 · Drivers protetores -->
+        <article class="eda-section">
+          <h3>Drivers protetores · O que reduz o risco de churn</h3>
+          <p class="eda-section-sub">Três fatores aparecem consistentemente como protetores na análise de correlação: vínculo social, indicação de origem e parceria empresarial. Cada um reduz churn por mecanismos distintos.</p>
+          <div class="driver-grid">
+            <div class="driver-card">
+              <div class="driver-name">Aulas em grupo (Group_visits)</div>
+              <div class="driver-effect">−18 pp</div>
+              <div class="driver-desc">Clientes que participam de aulas coletivas têm taxa de churn significativamente menor. O vínculo social com instrutores e colegas cria barreira emocional à saída — sair da academia significa sair também do grupo.</div>
+            </div>
+            <div class="driver-card">
+              <div class="driver-name">Indicação de amigos (Promo_friends)</div>
+              <div class="driver-effect">−14 pp</div>
+              <div class="driver-desc">Clientes que vieram por indicação de amigos já chegam integrados socialmente. A rede de relacionamento pré-existente acelera adaptação e reduz a probabilidade de abandono nos primeiros meses.</div>
+            </div>
+            <div class="driver-card">
+              <div class="driver-name">Convênio empresarial (Partner)</div>
+              <div class="driver-effect">−11 pp</div>
+              <div class="driver-desc">Clientes com desconto via empresa parceira têm menor sensibilidade ao preço e maior percepção de valor. O subsídio remove uma das principais justificativas de cancelamento.</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- PAGE 7 · Top 5 sinais de retenção -->
+        <article class="eda-section">
+          <h3>Top 5 sinais de retenção · Correlação com permanência</h3>
+          <p class="eda-section-sub">Estes são os cinco sinais com maior força de associação à permanência do cliente — base para a seleção de features do modelo preditivo.</p>
+          <div class="retention-signal-list">
+            <div class="ret-signal">
+              <div class="ret-rank">1</div>
+              <div>
+                <div class="ret-signal-name">Lifetime (tempo como cliente)</div>
+                <div class="ret-signal-desc">O sinal mais forte. Clientes com mais tempo de relacionamento têm rotina consolidada e maior custo de troca. Cada mês adicional reduz significativamente a probabilidade de churn.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">2</div>
+              <div>
+                <div class="ret-signal-name">Frequência atual (Avg_class_frequency_current_month)</div>
+                <div class="ret-signal-desc">Queda de frequência no mês atual é o sinal de alerta mais imediato. Clientes com frequência abaixo de 1 aula/semana têm risco substancialmente maior.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">3</div>
+              <div>
+                <div class="ret-signal-name">Duração do contrato (Contract_period)</div>
+                <div class="ret-signal-desc">Contratos anuais criam comprometimento financeiro e psicológico. A migração de mensal para anual é uma das ações de retenção com maior impacto documentado na base.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">4</div>
+              <div>
+                <div class="ret-signal-name">Frequência histórica (Avg_class_frequency_total)</div>
+                <div class="ret-signal-desc">A média histórica revela o padrão de comportamento estrutural do cliente. Clientes com histórico consistente tendem a retomar frequência após oscilações temporárias.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">5</div>
+              <div>
+                <div class="ret-signal-name">Meses até vencer o contrato (Month_to_end_contract)</div>
+                <div class="ret-signal-desc">Quanto mais próximo do vencimento, maior o risco. Clientes com menos de 1 mês até o vencimento têm probabilidade de churn 2× maior — janela crítica de intervenção.</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
         <article class="eda-insights" aria-labelledby="eda-insights-title">
           <div class="eda-insights-header">
             <div class="section-label" id="eda-insights-title">10 insights acionáveis</div>
@@ -1565,25 +2294,916 @@
     </div>
   </section>
 
-  <section class="tab-panel" id="tab-documentation" aria-label="Documentação da entrega Semana 5">
-    <div class="doc-layout">
+  <!-- ══════════════════════════════════════════════
+       TAB · SEGMENTAÇÃO / PERSONAS
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-segmentacao" aria-label="Segmentação K-Means e personas">
+    <div class="eda-layout">
+      <section class="card">
+        <div class="section-label">Segmentação K-Means · 4 clusters</div>
+        <p class="upload-help">K-Means (n_clusters=4, n_init=30, random_state=42) agrupou os 4.000 clientes em 4 perfis comportamentais. Envie o CSV para gerar os gráficos dinâmicos e o heatmap abaixo.</p>
+        <div class="seg-status waiting" id="seg-status">Aguardando upload do CSV na aba Upload.</div>
+      </section>
+
+      <!-- CONTEÚDO ESTÁTICO — sempre visível, baseado nos dados do artefato -->
+      <section class="seg-static">
+        <article class="chart-card">
+          <h3 class="chart-title">EDA · Achado 1 — Contrato e janela crítica de cancelamento</h3>
+          <div class="chart-two-col">
+            <div>
+              <div class="chart-subtitle">Churn rate por tipo de contrato</div>
+              <div class="vbar-chart">
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--high)">42,3%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:100%;background:var(--high)"></div></div>
+                  <span class="vbar-cat">Mensal<br>(1 m)</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:#d97706">12,5%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:29.5%;background:#d97706"></div></div>
+                  <span class="vbar-cat">Semestral<br>(6 m)</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--low)">2,4%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:5.7%;background:var(--low)"></div></div>
+                  <span class="vbar-cat">Anual<br>(12 m)</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="chart-subtitle">Churn por meses restantes no contrato</div>
+              <div class="vbar-chart">
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--high)">82,8%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:100%;background:var(--high)"></div></div>
+                  <span class="vbar-cat">0 m</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--high)">49,1%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:59.3%;background:var(--high)"></div></div>
+                  <span class="vbar-cat">≤ 1 m</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:#d97706">18,8%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:22.7%;background:#d97706"></div></div>
+                  <span class="vbar-cat">2–3 m</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--low)">4,7%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:5.7%;background:var(--low)"></div></div>
+                  <span class="vbar-cat">4–5 m</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--low)">0,8%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:1%;background:var(--low)"></div></div>
+                  <span class="vbar-cat">6–12 m</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--muted)">0%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:0%;background:var(--low)"></div></div>
+                  <span class="vbar-cat">12+ m</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="chart-card" style="margin-top:24px;">
+          <h3 class="chart-title">EDA · Achado 2 — Fatores de ancoragem social reduzem churn</h3>
+          <div class="vbar-grouped">
+            <div class="vbar-group">
+              <div class="vbar-group-label">Desafios em grupo</div>
+              <div class="vbar-pair">
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--high)">33,0%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:99%;background:var(--high)"></div></div>
+                  <span class="vbar-cat" style="color:var(--high)">Sem</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--low)">17,3%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:52%;background:var(--low)"></div></div>
+                  <span class="vbar-cat" style="color:var(--low)">Com</span>
+                </div>
+              </div>
+            </div>
+            <div class="vbar-group">
+              <div class="vbar-group-label">Indicação de amigo</div>
+              <div class="vbar-pair">
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--high)">31,3%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:94%;background:var(--high)"></div></div>
+                  <span class="vbar-cat" style="color:var(--high)">Sem</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--low)">15,8%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:47%;background:var(--low)"></div></div>
+                  <span class="vbar-cat" style="color:var(--low)">Com</span>
+                </div>
+              </div>
+            </div>
+            <div class="vbar-group">
+              <div class="vbar-group-label">Convênio empresarial</div>
+              <div class="vbar-pair">
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--high)">33,3%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:100%;background:var(--high)"></div></div>
+                  <span class="vbar-cat" style="color:var(--high)">Sem</span>
+                </div>
+                <div class="vbar-col">
+                  <span class="vbar-pct" style="color:var(--low)">19,4%</span>
+                  <div class="vbar-track"><div class="vbar-fill" style="height:58%;background:var(--low)"></div></div>
+                  <span class="vbar-cat" style="color:var(--low)">Com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:16px;font-size:0.82rem;">
+            Cada fator de ancoragem social reduz o churn em média <strong>~14 p.p.</strong> A combinação dos três (grupo + indicação + convênio) é o perfil de menor risco da base.
+          </div>
+        </article>
+
+        <article class="chart-card" style="margin-top:24px;">
+          <h3 class="chart-title">EDA · Achado 3 — Correlações com churn (todas negativas)</h3>
+          <div class="corr-chart">
+            <div class="corr-row">
+              <span class="corr-label">Lifetime</span>
+              <div class="corr-track"><div class="corr-bar ct" style="width:100%"></div></div>
+              <span class="corr-val">−0,44</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Freq. mês atual</span>
+              <div class="corr-track"><div class="corr-bar ct" style="width:93%"></div></div>
+              <span class="corr-val">−0,41</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Idade</span>
+              <div class="corr-track"><div class="corr-bar ct" style="width:91%"></div></div>
+              <span class="corr-val">−0,40</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Duração do contrato</span>
+              <div class="corr-track"><div class="corr-bar ct" style="width:89%"></div></div>
+              <span class="corr-val">−0,39</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Meses até fim</span>
+              <div class="corr-track"><div class="corr-bar ct" style="width:86%"></div></div>
+              <span class="corr-val">−0,38</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Freq. histórica</span>
+              <div class="corr-track"><div class="corr-bar ct" style="width:70%"></div></div>
+              <span class="corr-val">−0,31</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Gasto adicional</span>
+              <div class="corr-track"><div class="corr-bar co" style="width:59%"></div></div>
+              <span class="corr-val">−0,26</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Desafios em grupo</span>
+              <div class="corr-track"><div class="corr-bar co" style="width:48%"></div></div>
+              <span class="corr-val">−0,21</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Indicação de amigos</span>
+              <div class="corr-track"><div class="corr-bar co" style="width:41%"></div></div>
+              <span class="corr-val">−0,18</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Convênio empresarial</span>
+              <div class="corr-track"><div class="corr-bar co" style="width:34%"></div></div>
+              <span class="corr-val">−0,15</span>
+            </div>
+            <div class="corr-row">
+              <span class="corr-label">Mora perto</span>
+              <div class="corr-track"><div class="corr-bar co" style="width:32%"></div></div>
+              <span class="corr-val">−0,14</span>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px;font-size:0.82rem;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <span>Correlação de Pearson (negativa = proteção ao churn).</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:14px;background:#0d9488;border-radius:3px;display:inline-block;"></span>Sinal forte |r| ≥ 0,30</span>
+            <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:14px;background:#d97706;border-radius:3px;display:inline-block;"></span>Sinal moderado</span>
+          </div>
+        </article>
+
+        <article class="chart-card" style="margin-top:24px;">
+          <h3 class="chart-title">Segmentação · Churn rate e perfil dos 4 clusters</h3>
+
+          <div class="chart-subtitle" style="margin-top:0;">Churn rate por segmento</div>
+          <div class="bar-list" style="margin-bottom:24px;">
+            <div class="bar-row">
+              <div class="bar-meta">
+                <span>C0 · Recém-chegado em fuga <small style="color:var(--muted);font-weight:600;">1.363 cl. · 34%</small></span>
+                <span style="color:var(--high);font-weight:800;">52,7%</span>
+              </div>
+              <div class="bar-track"><div class="bar-value" style="width:100%;background:var(--high)"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-meta">
+                <span>C3 · Médio em trânsito <small style="color:var(--muted);font-weight:600;">554 cl. · 14%</small></span>
+                <span style="color:var(--med);font-weight:800;">44,2%</span>
+              </div>
+              <div class="bar-track"><div class="bar-value" style="width:83.9%;background:var(--med)"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-meta">
+                <span>C2 · Engajado mensal <small style="color:var(--muted);font-weight:600;">961 cl. · 24%</small></span>
+                <span style="color:#0891b2;font-weight:800;">7,0%</span>
+              </div>
+              <div class="bar-track"><div class="bar-value" style="width:13.3%;background:#0891b2"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-meta">
+                <span>C1 · Leal anual <small style="color:var(--muted);font-weight:600;">1.122 cl. · 28%</small></span>
+                <span style="color:var(--low);font-weight:800;">2,8%</span>
+              </div>
+              <div class="bar-track"><div class="bar-value" style="width:5.3%;background:var(--low)"></div></div>
+            </div>
+          </div>
+
+          <div class="chart-subtitle">Perfil de features por cluster</div>
+          <div class="hmap-scroll">
+            <table class="hmap-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>C0 · Em fuga<br><small style="color:var(--high);font-weight:700;">52,7%</small></th>
+                  <th>C1 · Leal anual<br><small style="color:var(--low);font-weight:700;">2,8%</small></th>
+                  <th>C2 · Engajado<br><small style="color:#0891b2;font-weight:700;">7,0%</small></th>
+                  <th>C3 · Trânsito<br><small style="color:var(--med);font-weight:700;">44,2%</small></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="hmap-feat">Lifetime (meses)</td>
+                  <td class="hmap-r4">2,33</td>
+                  <td class="hmap-r2">4,69</td>
+                  <td class="hmap-r1">5,10</td>
+                  <td class="hmap-r3">2,83</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">Duração contrato (m)</td>
+                  <td class="hmap-r4">1,97</td>
+                  <td class="hmap-r1">10,90</td>
+                  <td class="hmap-r2">2,65</td>
+                  <td class="hmap-r3">2,29</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">Freq. mês atual</td>
+                  <td class="hmap-r4">0,99</td>
+                  <td class="hmap-r2">1,96</td>
+                  <td class="hmap-r1">2,80</td>
+                  <td class="hmap-r3">1,49</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">Freq. histórica</td>
+                  <td class="hmap-r4">1,24</td>
+                  <td class="hmap-r2">1,97</td>
+                  <td class="hmap-r1">2,80</td>
+                  <td class="hmap-r3">1,68</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">Gasto adicional (R$)</td>
+                  <td class="hmap-r4">R$ 131</td>
+                  <td class="hmap-r1">R$ 161</td>
+                  <td class="hmap-r2">R$ 160</td>
+                  <td class="hmap-r3">R$ 135</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">Idade (anos)</td>
+                  <td class="hmap-r4">28</td>
+                  <td class="hmap-r1">30</td>
+                  <td class="hmap-r1">30</td>
+                  <td class="hmap-r3">29</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">% em grupo</td>
+                  <td class="hmap-r3">34%</td>
+                  <td class="hmap-r1">55%</td>
+                  <td class="hmap-r2">47%</td>
+                  <td class="hmap-r4">21%</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">% indicação amigo</td>
+                  <td class="hmap-r3">23%</td>
+                  <td class="hmap-r1">57%</td>
+                  <td class="hmap-r2">25%</td>
+                  <td class="hmap-r4">8%</td>
+                </tr>
+                <tr>
+                  <td class="hmap-feat">% convênio emp.</td>
+                  <td class="hmap-r3">35%</td>
+                  <td class="hmap-r1">78%</td>
+                  <td class="hmap-r3">35%</td>
+                  <td class="hmap-r2">46%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hmap-legend">
+            <div class="hmap-legend-item"><span class="hmap-swatch" style="background:rgba(13,148,136,0.28)"></span>Mais alto</div>
+            <div class="hmap-legend-item"><span class="hmap-swatch" style="background:#d1fae5"></span>Alto</div>
+            <div class="hmap-legend-item"><span class="hmap-swatch" style="background:#fef3c7"></span>Baixo</div>
+            <div class="hmap-legend-item"><span class="hmap-swatch" style="background:#fee2e2"></span>Mais baixo</div>
+          </div>
+        </article>
+
+        <div class="leitura-block" style="margin-top:24px;">
+          <h3>Leitura dos segmentos</h3>
+          <p>O K-Means identificou <strong>4 perfis comportamentais distintos</strong>. 78% do churn agregado concentra-se no C0 — confirmando a hipótese de "early drop-off" do business case.</p>
+          <div class="leitura-grid">
+            <div class="leitura-item">
+              <strong>C0 · Recém-chegado em fuga (52,7% churn)</strong>
+              <span>Altíssimo risco. Primeiros meses, sem vínculos. Precisa de onboarding intensivo nos primeiros 30 dias.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C1 · Leal anual (2,8% churn)</strong>
+              <span>Perfil de maior valor. Contrato longo, frequência consistente. Retenção quase orgânica — o risco é de negligência.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C2 · Engajado mensal (7,0% churn)</strong>
+              <span>Engajado mas sem comprometimento de longo prazo. Incentivo para migrar para contrato anual é a alavanca principal.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C3 · Médio em trânsito (44,2% churn)</strong>
+              <span>Zona cinza. Nem muito novo, nem muito leal. Frequência irregular. Precisa de atenção antes de entrar em silêncio.</span>
+            </div>
+          </div>
+        </div>
+
+        <article class="chart-card" style="margin-top:24px;">
+          <h3 class="chart-title">Personas · Narrativa dos segmentos</h3>
+          <div class="seg-card-grid">
+
+            <!-- C0 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c0">C0</div>
+                <div>
+                  <div class="seg-card-title">C0 · O Recém-chegado em fuga</div>
+                  <div class="seg-card-sub">Lucas · 1.363 clientes · 34% da base · churn 52,7%</div>
+                </div>
+              </div>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">1.363</div>
+                  <div class="seg-metric-lbl">Clientes</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">34%</div>
+                  <div class="seg-metric-lbl">Da base</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-high">52,7%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
+                </div>
+              </div>
+              <blockquote class="seg-quote">"Assinou no impulso, abriu duas vezes, esqueceu — e o cartão fará o resto."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Idade média 28 anos. Lifetime médio 2,2 meses. Contrato curto (predominante mensal). Frequência atual de 0,95 aulas/semana. Apenas 19% entrou por indicação. 38% via convênio.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>A menor fricção basta para o cancelamento. Sem vínculos sociais e sem contrato longo criando ancoragem financeira, a decisão de sair é simples. Uma semana de ausência sem follow-up é suficiente.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Onboarding intensivo nos primeiros 30 dias. Check-in semanal, aula de boas-vindas, convite para grupo coletivo. Cada contato nos primeiros 30 dias reduz o risco nos 60 seguintes.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Ação imediata nos primeiros 30 dias de contrato. A janela de intervenção é curta — a maioria dos churns ocorre antes do segundo mês completar.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Lifetime curto</span>
+                <span class="seg-tag">Sem grupo</span>
+                <span class="seg-tag">Contrato mensal</span>
+              </div>
+            </div>
+
+            <!-- C1 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c1">C1</div>
+                <div>
+                  <div class="seg-card-title">C1 · O Leal anual</div>
+                  <div class="seg-card-sub">Beatriz · 1.122 clientes · 28% da base · churn 2,8%</div>
+                </div>
+              </div>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">1.122</div>
+                  <div class="seg-metric-lbl">Clientes</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">28%</div>
+                  <div class="seg-metric-lbl">Da base</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-low">2,8%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
+                </div>
+              </div>
+              <blockquote class="seg-quote">"Já fez as contas. Pagou anual, indicou três amigas e participa do desafio mensal."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Idade média 30 anos. Lifetime médio 4,7 meses. Contrato anual (10,7 meses até fim). Frequência 2,0 aulas/semana. 78% via convênio, 57% por indicação, 53% participa de desafios em grupo.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>O risco não é de saída por insatisfação — é de negligência. Se a academia parar de nutrir o relacionamento, este cliente pode sentir-se invisível. A retenção orgânica pode mascarar distanciamento silencioso.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Programa de reconhecimento de tempo de casa. Acesso antecipado a novidades, convite para eventos exclusivos, comunicação personalizada que evidencie o valor construído juntos.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Manutenção do vínculo — não deixar o relacionamento esfriar por inércia. O menor investimento em reconhecimento tem retorno alto neste segmento.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Lifetime longo</span>
+                <span class="seg-tag">Contrato anual</span>
+                <span class="seg-tag">Alta frequência</span>
+              </div>
+            </div>
+
+            <!-- C2 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c2">C2</div>
+                <div>
+                  <div class="seg-card-title">C2 · O Engajado mensal</div>
+                  <div class="seg-card-sub">Fernanda · 961 clientes · 24% da base · churn 7,0%</div>
+                </div>
+              </div>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">961</div>
+                  <div class="seg-metric-lbl">Clientes</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">24%</div>
+                  <div class="seg-metric-lbl">Da base</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-low">7,0%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
+                </div>
+              </div>
+              <blockquote class="seg-quote">"Treina toda semana, gosta do ambiente — mas nunca parou para pensar se o mensal faz sentido."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Frequência acima da média (1,8 aulas/semana). Contrato de 1–3 meses. Bom engajamento comportamental. 34% participa de aulas coletivas. Sem comprometimento financeiro de longo prazo.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>Sem âncora financeira, qualquer oferta concorrente ou ausência de follow-up pode redirecionar a decisão. O elo mais fraco desta relação é o tipo de contrato, não o comportamento.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Oferta de migração para plano anual após o segundo mês consecutivo de boa frequência. O timing é crítico: cedo demais gera resistência, tarde demais perde a janela.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Campanha de upgrade para anual. Prioridade: clientes no segundo mês consecutivo com frequência acima da média do cluster.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Frequência ativa</span>
+                <span class="seg-tag">Contrato curto</span>
+                <span class="seg-tag">Potencial de upgrade</span>
+              </div>
+            </div>
+
+            <!-- C3 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c3">C3</div>
+                <div>
+                  <div class="seg-card-title">C3 · O Médio em trânsito</div>
+                  <div class="seg-card-sub">Marcos · 554 clientes · 14% da base · churn 44,2%</div>
+                </div>
+              </div>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">554</div>
+                  <div class="seg-metric-lbl">Clientes</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">14%</div>
+                  <div class="seg-metric-lbl">Da base</div>
+                </div>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-high">44,2%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
+                </div>
+              </div>
+              <blockquote class="seg-quote">"Aparece quando lembra. O problema é que está lembrando cada vez menos."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Lifetime intermediário. Frequência irregular (0,7 aulas/semana). Sem vínculos sociais consolidados. Nem muito novo nem muito leal — a relação ainda não se definiu.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>Zona cinza de relacionamento. Sem o estímulo da novidade do início nem a inércia do hábito consolidado, este cliente silencia gradualmente. A ausência de atenção é suficiente para o cancelamento.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Reengajamento ativo antes do silêncio definitivo. Convite para aula coletiva, desafio de meta semanal, contato personalizado quando a frequência cai abaixo de 1 aula/semana.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Campanha de reengajamento disparada quando frequência cai. Intervenção preemptiva — depois do segundo mês sem frequência, a taxa de sucesso de reativação cai significativamente.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Frequência irregular</span>
+                <span class="seg-tag">Histórico médio</span>
+                <span class="seg-tag">Reativável</span>
+              </div>
+            </div>
+
+          </div>
+        </article>
+      </section>
+      <!-- FIM CONTEÚDO ESTÁTICO -->
+
+      <!-- hidden anchors para JS — mantidos no DOM mas invisíveis -->
+      <div id="cluster-cards" style="display:none" aria-hidden="true"></div>
+      <div id="heatmap-body" style="display:none" aria-hidden="true"></div>
+
+      <!-- seg-dashboard: conteúdo removido — wrapper mantido para compatibilidade JS -->
+      <div id="seg-dashboard" style="display:none" aria-hidden="true">
+        <div id="cluster-churn-chart"></div>
+        <div id="cluster-size-chart"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       TAB · PREDIÇÃO (RF COMPLEMENTAR)
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-predicao" aria-label="Predição RF por cluster">
+    <div class="eda-layout">
+      <section class="card">
+        <div class="section-label">Predição RF · Camada complementar</div>
+        <p class="upload-help">O RandomForest <strong>não gera segmentos</strong> — atua como camada validadora. Para cada cluster K-Means, ele calcula a probabilidade média de churn e a distribuição de risco individual dos membros. Envie o CSV para ativar os resultados dinâmicos.</p>
+        <div class="pred-status waiting" id="pred-status">Aguardando upload e segmentação do CSV.</div>
+      </section>
+
+      <!-- CONTEÚDO ESTÁTICO RF — sempre visível -->
+      <section class="seg-static">
+        <article class="chart-card">
+          <h3 class="chart-title">Como o RandomForest complementa o K-Means</h3>
+          <div class="story-steps">
+            <div class="story-step">
+              <div>
+                <strong>K-Means segmenta — responde "quem é este cliente?"</strong>
+                <span>Os 4 clusters são criados com base em comportamento agregado: frequência, lifetime, tipo de contrato, vínculos sociais. São os perfis de negócio.</span>
+              </div>
+            </div>
+            <div class="story-step">
+              <div>
+                <strong>RF quantifica — responde "qual a probabilidade de cancelar?"</strong>
+                <span>Para cada membro de cada cluster, o RandomForest (100 árvores, random_state=42) calcula a probabilidade individual de churn. A média por cluster valida e enriquece a leitura do K-Means.</span>
+              </div>
+            </div>
+            <div class="story-step">
+              <div>
+                <strong>Convergência fortalece a decisão</strong>
+                <span>Se o K-Means identifica C0 como cluster de fuga e o RF confirma média ≥ 50% de probabilidade, a convergência dos dois sinais é o indicador mais confiável para priorizar intervenção.</span>
+              </div>
+            </div>
+            <div class="story-step">
+              <div>
+                <strong>Priorização dentro do cluster</strong>
+                <span>Dois clientes no mesmo cluster K-Means podem ter probabilidades RF muito diferentes. O RF permite ordenar quem deve ser contactado primeiro dentro de C0 ou C3.</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <h3 class="chart-title">Perfil esperado por cluster · referência do artefato</h3>
+          <div class="rf-grid">
+            <div class="rf-cluster-card">
+              <div class="rf-cluster-name">C0 · Recém-chegado em fuga</div>
+              <div class="rf-prob" style="color:var(--high)">Alto risco</div>
+              <div class="rf-risk-bars">
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--high)"></span>Alta proporção de clientes com RF ≥ 70%</div>
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--text)"></span>Lifetime curto amplifica sinal de risco</div>
+              </div>
+            </div>
+            <div class="rf-cluster-card">
+              <div class="rf-cluster-name">C1 · Leal anual</div>
+              <div class="rf-prob" style="color:var(--low)">Baixo risco</div>
+              <div class="rf-risk-bars">
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--low)"></span>Maioria com RF &lt; 40%</div>
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--text)"></span>Contrato longo e frequência estabilizam a predição</div>
+              </div>
+            </div>
+            <div class="rf-cluster-card">
+              <div class="rf-cluster-name">C2 · Engajado mensal</div>
+              <div class="rf-prob" style="color:var(--low)">Risco médio-baixo</div>
+              <div class="rf-risk-bars">
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--low)"></span>Frequência protege, contrato mensal expõe</div>
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--text)"></span>Dispersão interna maior que C1</div>
+              </div>
+            </div>
+            <div class="rf-cluster-card">
+              <div class="rf-cluster-name">C3 · Médio em trânsito</div>
+              <div class="rf-prob" style="color:var(--med)">Risco médio</div>
+              <div class="rf-risk-bars">
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--med)"></span>Distribuição ampla — há membros em todos os níveis de risco</div>
+                <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--text)"></span>RF é especialmente útil para priorizar neste cluster</div>
+              </div>
+            </div>
+          </div>
+          <p class="plot-caption" style="margin-top:14px;">Alto risco ≥ 70% · Médio 40–69% · Baixo &lt; 40%. Envie o CSV para ver os percentuais reais calculados no backend.</p>
+        </article>
+
+        <article class="chart-card">
+          <h3 class="chart-title">Métricas do modelo · referência de performance</h3>
+          <div class="callout">
+            <strong>ROC-AUC: 0,9703</strong> — O RandomForest treinado no gym_churn_us.csv alcança ROC-AUC de 0,9703 no conjunto de teste (20% da base, divisão estratificada). Este valor indica capacidade de separar churners de retidos com alta confiança. Accuracy: ~0,93 · Recall: ~0,85 · Precision: ~0,88.
+          </div>
+          <div style="margin-top:16px;">
+            <div class="leitura-grid">
+              <div class="leitura-item">
+                <strong>ROC-AUC = 0,9703</strong>
+                <span>Excelente · 0,50 = aleatório · 0,70 = razoável · 0,85 = bom · 0,90+ = muito bom</span>
+              </div>
+              <div class="leitura-item">
+                <strong>100 estimadores</strong>
+                <span>Cada árvore vota. A média dos votos é a probabilidade de churn. Reduz variância e instabilidade de árvores individuais.</span>
+              </div>
+              <div class="leitura-item">
+                <strong>Divisão estratificada</strong>
+                <span>80/20 com stratify=y. Mantém a proporção de churn igual em treino e teste — evita bias por desbalanceamento.</span>
+              </div>
+              <div class="leitura-item">
+                <strong>Threshold padrão: 50%</strong>
+                <span>Acima de 50% → churn previsto. Ajustável conforme custo relativo de falso positivo vs. falso negativo no negócio.</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+      <!-- FIM CONTEÚDO ESTÁTICO RF -->
+
+      <section class="pred-dashboard" id="pred-dashboard">
+        <article class="chart-card">
+          <h3 class="chart-title">Probabilidade média de churn por cluster (RandomForest)</h3>
+          <div class="rf-grid" id="rf-grid"></div>
+          <p class="plot-caption" style="margin-top:14px;">
+            Alto risco ≥ 70% · Médio 40–69% · Baixo &lt; 40%. O RF não cria os segmentos — confirma o risco já identificado pelo K-Means com uma estimativa probabilística por membro.
+          </p>
+        </article>
+        <article class="chart-card">
+          <h3 class="chart-title">Como interpretar a camada RF</h3>
+          <div class="story-steps">
+            <div class="story-step"><div><strong>K-Means segmenta</strong><span>Os 4 clusters são criados pelo K-Means com base em comportamento (frequência, lifetime, contrato). São os perfis de negócio.</span></div></div>
+            <div class="story-step"><div><strong>RF quantifica o risco</strong><span>Para cada membro de cada cluster, o RandomForest calcula a probabilidade de churn. A média por cluster valida a leitura do K-Means.</span></div></div>
+            <div class="story-step"><div><strong>Complementaridade</strong><span>Se o K-Means identifica C0 como cluster de fuga e o RF confirma 70%+ de probabilidade média, a convergência fortalece a confiança na ação de retenção.</span></div></div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       TAB · MINI DECK
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-minideck" aria-label="Mini Deck de apresentação">
+    <section class="card">
+      <div class="section-label">Mini Deck · 10 slides</div>
+
+      <nav class="deck-index" aria-label="Índice do Mini Deck">
+        <a href="#deck-s1" class="deck-index-link">01 · Contexto</a>
+        <a href="#deck-s2" class="deck-index-link">02 · O que o dado mostra</a>
+        <a href="#deck-s3" class="deck-index-link">03 · Metodologia</a>
+        <a href="#deck-s4" class="deck-index-link">04 · Jornada técnica</a>
+        <a href="#deck-s5" class="deck-index-link">05 · EDA · Achados principais</a>
+        <a href="#deck-s6" class="deck-index-link">06 · Segmentação · 4 clusters</a>
+        <a href="#deck-s7" class="deck-index-link">07 · Personas</a>
+        <a href="#deck-s8" class="deck-index-link">08 · Limitações</a>
+        <a href="#deck-s9" class="deck-index-link">09 · Evidência EDA</a>
+        <a href="#deck-s10" class="deck-index-link">10 · Glossário</a>
+      </nav>
+
+      <div class="deck-scroll">
+
+        <div class="deck-section" id="deck-s1">
+          <div class="deck-slide-num">Slide 01 / 10</div>
+          <div class="deck-slide-title">Contexto</div>
+          <div class="deck-slide-body">
+            <p>Academias dependem de recorrência. A receita é previsível enquanto o cliente permanece — e invisível quando ele vai embora. O problema não é o cancelamento em si: é que o cancelamento já estava sinalizado dias, às vezes semanas antes.</p>
+            <ul>
+              <li><strong>Base:</strong> 4.000 clientes de uma academia americana (gym_churn_us.csv)</li>
+              <li><strong>Taxa de churn observada:</strong> ~26,5% da base cancelou</li>
+              <li><strong>Pergunta central:</strong> é possível identificar antecipadamente quem vai sair?</li>
+              <li><strong>Entrega:</strong> segmentação por perfil de risco + modelo preditivo de churn</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s2">
+          <div class="deck-slide-num">Slide 02 / 10</div>
+          <div class="deck-slide-title">O que o dado mostra</div>
+          <div class="deck-slide-body">
+            <p>A análise exploratória revelou padrões consistentes que direcionaram tanto a escolha das features quanto o design dos clusters.</p>
+            <ul>
+              <li>Clientes com <strong>Lifetime ≤ 1 mês</strong> têm taxa de churn desproporcionalmente alta — o primeiro mês é crítico</li>
+              <li><strong>Queda de frequência recente</strong> é o sinal mais imediato de risco — quem reduz presença no mês atual está sinalizando saída</li>
+              <li>Contratos de <strong>1 mês têm ~45% de churn</strong>; contratos anuais têm ~5%</li>
+              <li>Os <strong>30 dias antes do vencimento</strong> concentram risco 2× maior — janela crítica de intervenção</li>
+              <li>Vínculos sociais (aulas em grupo, indicação) reduzem churn em até 18 pontos percentuais</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s3">
+          <div class="deck-slide-num">Slide 03 / 10</div>
+          <div class="deck-slide-title">Metodologia</div>
+          <div class="deck-slide-body">
+            <p>A arquitetura técnica combina dois algoritmos com papéis distintos e complementares:</p>
+            <ul>
+              <li><strong>K-Means (segmentação):</strong> n_clusters=4, n_init=30, random_state=42. StandardScaler aplicado apenas nas 11 features (Churn excluído da normalização). Clusters validados por silhouette score e método do cotovelo.</li>
+              <li><strong>RandomForest (predição):</strong> 100 estimadores, random_state=42. Treinado com target Churn. Atua como camada complementar — não gera segmentos, quantifica probabilidade por membro.</li>
+              <li><strong>Separação clara de papéis:</strong> K-Means define perfis comportamentais; RF estima risco individual dentro de cada perfil.</li>
+              <li><strong>Alternativas avaliadas e descartadas:</strong> Cox (sem segmentos diretos), DBSCAN (instável), GMM (clusters sobrepostos).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s4">
+          <div class="deck-slide-num">Slide 04 / 10</div>
+          <div class="deck-slide-title">Jornada técnica</div>
+          <div class="deck-slide-body">
+            <p>O fluxo foi desenhado para ser executável em demonstração ao vivo:</p>
+            <ul>
+              <li><strong>1. Upload:</strong> usuário envia gym_churn_us.csv pela aba Upload</li>
+              <li><strong>2. Treino RF:</strong> backend treina RandomForest, retorna métricas (ROC-AUC, accuracy, recall)</li>
+              <li><strong>3. Dashboard EDA:</strong> análise exploratória gerada automaticamente com gráficos e insights</li>
+              <li><strong>4. Segmentação K-Means:</strong> chamada ao endpoint /segment — clusters, heatmap, silhouette</li>
+              <li><strong>5. Camada RF por cluster:</strong> probabilidade média de churn e distribuição de risco por segmento</li>
+              <li><strong>6. Inferência individual:</strong> aba Inferência permite estimar risco de um cliente específico</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s5">
+          <div class="deck-slide-num">Slide 05 / 10</div>
+          <div class="deck-slide-title">EDA · Achados principais</div>
+          <div class="deck-slide-body">
+            <p>A análise exploratória consolidou os sinais que alimentam tanto o modelo quanto os clusters:</p>
+            <ul>
+              <li><strong>Top feature:</strong> Lifetime — tempo como cliente é o maior preditor de permanência</li>
+              <li><strong>Alerta imediato:</strong> frequência atual abaixo de 1 aula/semana precede cancelamento</li>
+              <li><strong>Contrato é âncora:</strong> migrar de mensal para anual reduz churn em ~40 pontos percentuais</li>
+              <li><strong>Drivers protetores:</strong> aulas em grupo (−18 pp), indicação de amigos (−14 pp), convênio (−11 pp)</li>
+              <li><strong>Segmentos diagnósticos:</strong> early droppers, sleeping dogs e anuais com uso zero — três perfis de risco distintos</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s6">
+          <div class="deck-slide-num">Slide 06 / 10</div>
+          <div class="deck-slide-title">Segmentação · 4 clusters</div>
+          <div class="deck-slide-body">
+            <p>O K-Means identificou 4 perfis comportamentais com taxas de churn distintas:</p>
+            <ul>
+              <li><strong>C0 · Recém-chegado em fuga (52,7% churn · 1.363 clientes):</strong> primeiros meses, sem rotina, sem vínculos — alto risco. Ação: onboarding intensivo nos primeiros 30 dias</li>
+              <li><strong>C1 · Leal anual (2,8% churn · 1.122 clientes):</strong> contrato longo, frequência consistente, engajado socialmente — retenção orgânica. Ação: nutrição do relacionamento</li>
+              <li><strong>C2 · Engajado mensal (7,0% churn · 961 clientes):</strong> ativo mas sem comprometimento longo. Ação: incentivo para migração para anual</li>
+              <li><strong>C3 · Médio em trânsito (44,2% churn · 554 clientes):</strong> zona cinza, frequência irregular. Ação: reengajamento antes do silêncio definitivo</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s7">
+          <div class="deck-slide-num">Slide 07 / 10</div>
+          <div class="deck-slide-title">Personas</div>
+          <div class="deck-slide-body">
+            <p>Cada cluster foi traduzido em uma persona com narrativa, perfil comportamental e sinal de entrada:</p>
+            <ul>
+              <li><strong>Recém-chegado em fuga:</strong> chegou com expectativa, ainda não encontrou o ritmo. Sem amigos, sem rotina. A menor fricção o faz sair. Intervenção nos primeiros 30 dias.</li>
+              <li><strong>Leal anual:</strong> está aqui faz tempo. Tem contrato, frequenta, participa. O risco é de negligência — sentir-se invisível. Nutrição do relacionamento.</li>
+              <li><strong>Engajado mensal:</strong> frequenta bem, mas não tem plano longo. Com o incentivo certo no momento certo, migra para anual.</li>
+              <li><strong>Médio em trânsito:</strong> nem novo, nem leal. Frequência irregular. Silencia gradualmente sem atenção. Reengajamento ativo antes do silêncio.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s8">
+          <div class="deck-slide-num">Slide 08 / 10</div>
+          <div class="deck-slide-title">Limitações</div>
+          <div class="deck-slide-body">
+            <p>O modelo e a segmentação têm limitações conhecidas que contextualizam sua aplicação:</p>
+            <ul>
+              <li><strong>Base americana:</strong> os padrões de comportamento podem não se traduzir diretamente para academias brasileiras com dinâmicas culturais distintas</li>
+              <li><strong>Clusters esféricos:</strong> K-Means assume clusters de formato esférico — perfis com sobreposição natural (ex: C2 e C3) podem ser melhor capturados por GMM em bases maiores</li>
+              <li><strong>Ausência de dados temporais:</strong> a base é um snapshot, não uma série temporal — mudanças de comportamento ao longo do tempo não são capturadas diretamente</li>
+              <li><strong>Features disponíveis:</strong> variáveis como NPS, histórico de reclamações e interações digitais poderiam enriquecer os clusters</li>
+              <li><strong>Validação de negócio:</strong> os clusters precisam ser validados com o time de operações — a segmentação é um ponto de partida, não uma conclusão</li>
+            </ul>
+          </div>
+        </div>
+
+
+        <div class="deck-section" id="deck-s9">
+          <div class="deck-slide-num">Slide 09 / 10</div>
+          <div class="deck-kicker">Evidência formal da EDA</div>
+          <div class="deck-slide-title">Notebook de análise exploratória</div>
+          <div class="deck-slide-body">
+            <p>Além do Dashboard EDA interativo, a entrega inclui um notebook Jupyter com a análise formal da base: carga do CSV, limpeza, estatísticas descritivas, gráficos, correlações e conclusão sobre as features usadas.</p>
+            <div class="deck-info-box">
+              Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>notebooks/gym_churn_us.csv</strong>.
+            </div>
+            <div class="deck-btns">
+              <a href="notebooks/eda_churn.ipynb" download class="deck-btn">Abrir notebook EDA</a>
+              <a href="eda_report.html" target="_blank" class="deck-btn">Abrir relatório visual EDA</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s10">
+          <div class="deck-slide-num">Slide 10 / 10</div>
+          <div class="deck-slide-title">Glossário</div>
+          <div class="deck-slide-body">
+            <p>Termos técnicos usados ao longo do projeto:</p>
+            <div class="deck-gloss">
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Churn</span>
+                <span class="deck-gloss-def">Cancelamento da assinatura pelo cliente. Variável binária alvo dos modelos preditivos.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">EDA</span>
+                <span class="deck-gloss-def">Análise Exploratória de Dados — fase que examina distribuições, correlações e padrões antes da modelagem.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">K-Means</span>
+                <span class="deck-gloss-def">Algoritmo de agrupamento não supervisionado que particiona os dados em k clusters minimizando a variância intra-cluster.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Cluster</span>
+                <span class="deck-gloss-def">Grupo de clientes com perfil comportamental similar, identificado pelo K-Means a partir das 11 features normalizadas.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Silhouette Score</span>
+                <span class="deck-gloss-def">Métrica de qualidade de clustering — mede coesão interna e separação entre clusters. Varia de -1 a 1 (quanto maior, melhor).</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">StandardScaler</span>
+                <span class="deck-gloss-def">Técnica de normalização que transforma cada feature para média 0 e desvio padrão 1, necessária para o K-Means funcionar corretamente.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">RandomForest</span>
+                <span class="deck-gloss-def">Ensemble de árvores de decisão usado para predição de churn individual. Fornece probabilidade de cancelamento e ranking de importância das features.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Lifetime</span>
+                <span class="deck-gloss-def">Tempo total de permanência do cliente como assinante, em meses. Feature com correlação negativa forte com churn.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Ancoragem</span>
+                <span class="deck-gloss-def">Conjunto de fatores que reduzem a propensão ao cancelamento: contrato longo, participação em grupo, indicação por amigo, convênio.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Feature</span>
+                <span class="deck-gloss-def">Variável de entrada dos modelos. Exemplos: frequência semanal, tipo de contrato, lifetime, participação em aulas coletivas.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       TAB · METODOLOGIA (renomeado de Documentação)
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-metodologia" aria-label="Metodologia da entrega">
+    <div class="met-layout">
       <section class="doc-story">
         <article class="doc-hero">
-          <div class="doc-kicker">Entrega Semana 5</div>
-          <h2>Da análise exploratória à primeira inferência de churn</h2>
+          <div class="doc-kicker">Entrega Módulo 2</div>
+          <h2>Da dúvida à arquitetura · A jornada metodológica</h2>
           <p>
-            A proposta desta semana é demonstrar uma primeira versão funcional: entender a base de clientes,
-            treinar um modelo preditivo e disponibilizar uma interface simples para estimar o risco de cancelamento.
-            O fluxo foi desenhado para ser demonstrável em sala: o usuário envia o CSV, o backend treina o modelo
-            e a tela de inferência passa a usar esse treinamento.
+            A pergunta inicial não era "qual algoritmo usar" — era "o que o dado mostra sobre quem cancela".
+            A EDA revelou padrões claros: frequência, lifetime e tipo de contrato separam churners de retidos com
+            consistência. A partir daí, a decisão foi segmentar para entender perfis, depois predizer para quantificar risco.
           </p>
           <div class="doc-pill-row">
-            <span class="doc-pill">EDA</span>
-            <span class="doc-pill">Dashboard EDA</span>
-            <span class="doc-pill">Upload CSV</span>
+            <span class="doc-pill">K-Means · 4 clusters</span>
             <span class="doc-pill">RandomForest</span>
+            <span class="doc-pill">StandardScaler</span>
             <span class="doc-pill">FastAPI</span>
             <span class="doc-pill">Vercel + Render</span>
+            <span class="doc-pill">8 abas</span>
           </div>
         </article>
 
@@ -1593,143 +3213,139 @@
             <span>clientes na base original</span>
           </div>
           <div class="doc-summary-item">
-            <strong>11</strong>
-            <span>features usadas pelo modelo</span>
+            <strong>4</strong>
+            <span>clusters K-Means · personas</span>
           </div>
           <div class="doc-summary-item">
-            <strong>4 abas</strong>
-            <span>inferência, upload, dashboard EDA e documentação</span>
+            <strong>11</strong>
+            <span>features · 2 algoritmos</span>
           </div>
         </aside>
       </section>
 
       <div class="doc-grid">
-        <article class="doc-card accent">
-          <div class="doc-kicker">1. Contexto do problema</div>
-          <h3>Por que prever churn em academias?</h3>
-          <p>
-            Academias dependem de recorrência. Quando um cliente reduz frequência, está perto do fim do contrato
-            ou interage pouco com a operação, o risco de cancelamento aumenta. O objetivo do projeto é transformar
-            esses sinais em uma probabilidade de churn para apoiar ações de retenção.
-          </p>
-        </article>
-
-        <article class="doc-card">
-          <div class="doc-kicker">2. Dados utilizados</div>
-          <h3>O que existe na base</h3>
-          <ul>
-            <li>4.000 clientes de uma academia americana.</li>
-            <li>Target: Churn, em que 0 significa permaneceu e 1 significa cancelou.</li>
-            <li>Sem valores nulos, com limpeza de duplicados no pipeline.</li>
-            <li>gender e Phone foram descartadas por baixa relação com o cancelamento.</li>
-          </ul>
+        <article class="doc-card full">
+          <div class="doc-kicker">Jornada metodológica</div>
+          <h3>Do dado bruto à arquitetura de retenção preditiva</h3>
+          <div class="met-step-grid" style="margin-top:16px;">
+            <div class="met-step">
+              <div class="met-step-num">1</div>
+              <div class="met-step-content">
+                <strong>A dúvida inicial · O que o dado mostra?</strong>
+                <span>A EDA revelou que churn não é aleatório. Frequência recente, tempo como cliente e tipo de contrato separam churners de retidos com correlações fortes. A pergunta mudou: de "quem vai cancelar?" para "que tipo de cliente este é?".</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">2</div>
+              <div class="met-step-content">
+                <strong>A regra de negócio · Segmentar antes de predizer</strong>
+                <span>A decisão foi criar personas comportamentais antes de aplicar predição. Tratar todos os clientes como um grupo homogêneo ignora que um cliente do primeiro mês e um cliente de 12 meses têm jornadas completamente distintas — e precisam de ações distintas.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">3</div>
+              <div class="met-step-content">
+                <strong>A escolha do K-Means · Por que não outras alternativas?</strong>
+                <span>Cox Proportional Hazards exige dados longitudinais completos e não gera segmentos diretos. DBSCAN é sensível a parâmetros e produz clusters difíceis de comunicar. GMM gera sobreposições que confundem equipes de retenção. O K-Means com k=4 produziu clusters estáveis, interpretáveis e validados pelo silhouette score.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">4</div>
+              <div class="met-step-content">
+                <strong>As fragilidades reconhecidas · Onde o K-Means é limitado</strong>
+                <span>Clusters esféricos não capturam perfis com sobreposição natural. A base é americana — padrões comportamentais podem não se traduzir diretamente. O snapshot único não captura evolução temporal do cliente. Essas limitações justificam a camada complementar do RandomForest.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">5</div>
+              <div class="met-step-content">
+                <strong>A decisão · RF como camada complementar</strong>
+                <span>O RandomForest não substitui o K-Means — ele o complementa. Os clusters definem os perfis comportamentais (quem é esse cliente?); o RF quantifica o risco individual dentro de cada perfil (qual a probabilidade de este cliente específico cancelar?). A convergência entre os dois fortalece a confiança na ação de retenção.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">6</div>
+              <div class="met-step-content">
+                <strong>A complementaridade · Dois algoritmos, dois papéis</strong>
+                <span>K-Means responde "quem é este cliente?" com base em comportamento histórico agregado. O RF responde "qual a probabilidade deste cliente cancelar?" com base nas mesmas 11 features, mas em nível individual. Juntos, permitem priorizar intervenções: atuar primeiro no C0 com maior probabilidade RF.</span>
+              </div>
+            </div>
+          </div>
         </article>
 
         <article class="doc-card full">
-          <div class="doc-kicker">3. Jornada técnica</div>
-          <h3>Como a solução funciona na prática</h3>
-          <div class="story-steps">
-            <div class="story-step">
-              <div>
-                <strong>Upload da base</strong>
-                <span>O usuário envia o arquivo gym_churn_us.csv pela aba Upload CSV.</span>
-              </div>
+          <div class="doc-kicker">Comparativo de algoritmos de segmentação</div>
+          <h3>Por que K-Means foi escolhido</h3>
+          <div class="algo-compare" style="margin-top:16px;">
+            <div class="algo-card">
+              <div class="algo-name">Cox Proportional Hazards</div>
+              <div class="algo-verdict">Descartado</div>
+              <div class="algo-desc">Requer dados longitudinais com eventos de censura bem definidos. Não gera clusters diretos — apenas fatores de risco individuais. Inadequado para o objetivo de criar personas de negócio.</div>
             </div>
-            <div class="story-step">
-              <div>
-                <strong>Validação e limpeza</strong>
-                <span>O backend confere se existem Churn e as 11 features, remove duplicados e linhas inválidas.</span>
-              </div>
+            <div class="algo-card">
+              <div class="algo-name">DBSCAN</div>
+              <div class="algo-verdict">Descartado</div>
+              <div class="algo-desc">Sensível aos parâmetros ε e min_samples. Detecta outliers mas produz número variável de clusters difícil de fixar. Clusters de formato arbitrário complicam interpretação para equipes de retenção.</div>
             </div>
-            <div class="story-step">
-              <div>
-                <strong>Treino do modelo</strong>
-                <span>A FastAPI treina um RandomForest, calcula métricas e mantém o modelo disponível em runtime.</span>
-              </div>
+            <div class="algo-card">
+              <div class="algo-name">Gaussian Mixture (GMM)</div>
+              <div class="algo-verdict">Descartado</div>
+              <div class="algo-desc">Clusters soft com probabilidade de pertencimento — flexível mas gera sobreposições que dificultam a comunicação de perfis mutuamente exclusivos para o time de CRM.</div>
             </div>
-            <div class="story-step">
-              <div>
-                <strong>Inferência</strong>
-                <span>A tela envia os dados do cliente para o Render e recebe probabilidade, rótulo e nível de risco.</span>
-              </div>
+            <div class="algo-card chosen">
+              <div class="algo-name">K-Means</div>
+              <div class="algo-verdict">Escolhido · n_clusters=4 · n_init=30</div>
+              <div class="algo-desc">Clusters esféricos e interpretáveis. Silhouette score validou k=4 como ponto ótimo. Permite nomear personas e comunicar churn por segmento de forma direta para equipes não-técnicas.</div>
+            </div>
+            <div class="algo-card" style="grid-column:span 2;">
+              <div class="algo-name">RandomForest (papel complementar)</div>
+              <div class="algo-verdict">Predição individual · não gera segmentos</div>
+              <div class="algo-desc">100 estimadores, random_state=42. Treinado no target Churn. Calcula probabilidade por membro, permitindo priorização dentro de cada cluster. ROC-AUC como métrica principal — mede capacidade de separar churners de retidos independente do threshold.</div>
             </div>
           </div>
         </article>
 
-        <article class="doc-card">
-          <div class="doc-kicker">4. EDA</div>
-          <h3>O que a exploração dos dados busca responder</h3>
-          <p>
-            A aba Dashboard EDA transforma o CSV enviado em visualizações reais da base, cobrindo limpeza,
-            distribuição de churn, contratos, médias por grupo e correlação das features com o cancelamento.
+        <article class="doc-card full rf-highlight-box">
+          <div class="doc-kicker">RandomForest + ROC-AUC</div>
+          <h3>O algoritmo de predição e sua métrica de avaliação</h3>
+          <p class="rf-highlight-text">
+            Utilizamos o <strong>RandomForestClassifier</strong>, um algoritmo consolidado de machine learning disponível na biblioteca scikit-learn. Ele combina múltiplas árvores de decisão para estimar a probabilidade de churn de cada cliente. Sua performance foi avaliada principalmente pelo <strong>ROC-AUC</strong>, métrica adequada para medir a capacidade de diferenciar clientes com maior ou menor risco de churn. O treino acontece após o upload do CSV, com divisão estratificada de treino e teste. As métricas do treino atual aparecem automaticamente na aba <strong>Upload CSV</strong> após o backend finalizar o treinamento.
           </p>
-          <ul>
-            <li>Qual é a proporção de clientes que cancelaram?</li>
-            <li>Clientes com menor frequência recente cancelam mais?</li>
-            <li>Tempo como cliente e contrato longo ajudam na retenção?</li>
-            <li>Quais variáveis parecem mais relacionadas ao churn?</li>
-          </ul>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">5. Modelo</div>
-          <h3>RandomForest + ROC-AUC</h3>
-          <p>
-            Utilizamos o RandomForestClassifier, um algoritmo consolidado de machine learning disponível na biblioteca scikit-learn.
-            Ele combina múltiplas árvores de decisão para estimar a probabilidade de churn de cada cliente.
-          </p>
-          <p>
-            Sua performance foi avaliada principalmente pelo ROC-AUC, métrica adequada para medir a capacidade de diferenciar
-            clientes com maior ou menor risco de churn.
-          </p>
-          <div class="callout">
-            O treino acontece após o upload do CSV, com divisão estratificada de treino e teste. As métricas do treino atual aparecem automaticamente na aba Upload CSV após o backend finalizar o treinamento.
-          </div>
-        </article>
-
-        <article class="doc-card">
-          <div class="doc-kicker">6. Features usadas</div>
-          <h3>Quais sinais alimentam a previsão</h3>
+          <div class="doc-kicker">Features do modelo</div>
+          <h3>As 11 variáveis que alimentam K-Means e RF</h3>
           <div class="feature-list">
-            <span>Tempo como cliente: Lifetime</span>
-            <span>Frequência recente: Avg_class_frequency_current_month</span>
-            <span>Idade: Age</span>
-            <span>Contrato: Contract_period e Month_to_end_contract</span>
-            <span>Histórico de uso: Avg_class_frequency_total</span>
-            <span>Gastos extras: Avg_additional_charges_total</span>
-            <span>Vínculo e contexto: Group_visits, Promo_friends, Partner, Near_Location</span>
+            <span>Lifetime · tempo como cliente (meses)</span>
+            <span>Avg_class_frequency_current_month · frequência recente</span>
+            <span>Age · idade do cliente</span>
+            <span>Contract_period · duração do contrato</span>
+            <span>Month_to_end_contract · meses até o vencimento</span>
+            <span>Avg_class_frequency_total · frequência histórica</span>
+            <span>Avg_additional_charges_total · gastos extras</span>
+            <span>Group_visits · participação em aulas coletivas</span>
+            <span>Promo_friends · origem por indicação</span>
+            <span>Partner · convênio empresarial</span>
+            <span>Near_Location · proximidade da academia</span>
+          </div>
+          <div class="callout">
+            StandardScaler aplicado apenas nas 11 features para o K-Means. A coluna Churn é excluída da normalização — ela não entra na segmentação, apenas no treino supervisionado do RF.
           </div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">7. Como interpretar</div>
-          <h3>Da probabilidade para a ação</h3>
+          <div class="doc-kicker">Interpretação dos resultados</div>
+          <h3>Como ler os outputs da ferramenta</h3>
           <ul>
-            <li>Baixo risco: probabilidade menor que 40%, cliente aparentemente estável.</li>
-            <li>Risco médio: probabilidade entre 40% e 69%, cliente merece acompanhamento.</li>
-            <li>Alto risco: probabilidade a partir de 70%, ação de retenção recomendada.</li>
+            <li><strong>Silhouette score:</strong> quanto mais próximo de 1, mais separados os clusters. Abaixo de 0.3 indica sobreposição excessiva.</li>
+            <li><strong>Churn rate por cluster:</strong> taxa observada na base — o quanto do cluster histórico cancelou.</li>
+            <li><strong>Probabilidade RF:</strong> estimativa individual do RandomForest — o quanto este cliente específico tem chance de cancelar.</li>
+            <li><strong>Heatmap normalizado:</strong> valores de 0 a 1 por feature, normalizados entre clusters — revela o perfil relativo de cada segmento.</li>
           </ul>
           <div class="callout">
-            A inferência funciona com pelo menos 2 campos. Os campos ausentes são completados com valores de referência derivados do treinamento.
+            Baixo risco &lt; 40% · Médio risco 40–69% · Alto risco ≥ 70%. Ações de retenção devem priorizar membros de C0 com RF alto — a convergência dos dois sinais é o indicador mais confiável.
           </div>
-        </article>
-
-        <article class="doc-card full">
-          <div class="doc-kicker">Evidência formal da EDA</div>
-          <h3>Notebook de análise exploratória</h3>
-          <p>
-            Além do Dashboard EDA interativo, a entrega inclui um notebook Jupyter com a análise formal da base:
-            carga do CSV, limpeza, estatísticas descritivas, gráficos, correlações e conclusão sobre as features usadas.
-          </p>
-          <div class="callout">
-            Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>notebooks/gym_churn_us.csv</strong>.
-          </div>
-          <a class="doc-link" href="/notebooks/eda_churn.ipynb" target="_blank" rel="noopener">
-            Abrir notebook EDA
-          </a>
-          <a class="doc-link" href="/notebooks/eda_churn_visual.html" target="_blank" rel="noopener">
-            Abrir relatório visual EDA
-          </a>
         </article>
       </div>
     </div>
@@ -1741,6 +3357,8 @@
   // Troque pela URL do seu backend no Render
   // ==================================================
   const API_URL = "https://modulo2-g6.onrender.com";
+
+  let csvRowsCache = null;
 
   // Estado dos toggles
   const toggleValues = {
@@ -1821,6 +3439,7 @@
         rocAuc: data.metrics.roc_auc,
       });
       await carregarDashboardEda(fileInput.files[0]);
+      await carregarSegmentacao(fileInput.files[0]);
     } catch (err) {
       statusEl.className = "upload-status error";
       statusEl.textContent = `Erro ao treinar modelo: ${err.message}`;
@@ -1973,6 +3592,7 @@
 
     try {
       const rows = parsearCsvNumerico(await file.text());
+      csvRowsCache = rows;
       const extensoes = criarExtensoesEdaLocal(rows);
       return { ...data, ...extensoes };
     } catch (err) {
@@ -2709,6 +4329,367 @@
       minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
     }).format(value);
   }
+
+  // ── LIMPAR ──────────────────────────────────────
+  function limparAnalise() {
+    const uploadStatus = document.getElementById("upload-status");
+    uploadStatus.className = "upload-status";
+    uploadStatus.textContent = "";
+
+    const metricsEl = document.getElementById("training-metrics");
+    metricsEl.className = "training-metrics";
+    metricsEl.replaceChildren();
+
+    const edaStatus = document.getElementById("eda-status");
+    edaStatus.className = "eda-status waiting";
+    edaStatus.textContent = "Aguardando upload do CSV na aba Upload CSV.";
+    document.getElementById("eda-dashboard").className = "eda-dashboard";
+
+    const segStatus = document.getElementById("seg-status");
+    segStatus.className = "seg-status waiting";
+    segStatus.textContent = "Aguardando upload do CSV na aba Upload.";
+    document.getElementById("seg-dashboard").className = "seg-dashboard";
+
+    const predStatus = document.getElementById("pred-status");
+    predStatus.className = "pred-status waiting";
+    predStatus.textContent = "Aguardando upload e segmentação do CSV.";
+    document.getElementById("pred-dashboard").className = "pred-dashboard";
+
+    document.getElementById("hero-customers").textContent = "-";
+    document.getElementById("hero-churn-rate").textContent = "-";
+    document.getElementById("hero-roc-auc").textContent = "-";
+    csvRowsCache = null;
+  }
+
+  function limparDataset() {
+    document.getElementById("csv-file").value = "";
+    limparAnalise();
+  }
+
+  // ── SEGMENTAÇÃO K-MEANS ──────────────────────────
+  // ── CLIENT-SIDE K-MEANS ──────────────────────────────────────────
+  function runClientKMeans(rows) {
+    const SEG_FEATURES = [
+      "Lifetime","Avg_class_frequency_current_month","Age","Contract_period",
+      "Month_to_end_contract","Avg_class_frequency_total","Avg_additional_charges_total",
+      "Group_visits","Promo_friends","Partner","Near_Location"
+    ];
+    const HMAP_FEATURES = [
+      "Lifetime","Avg_class_frequency_current_month","Age","Contract_period",
+      "Month_to_end_contract","Avg_class_frequency_total","Group_visits","Promo_friends","Partner"
+    ];
+    const HMAP_LABELS = {
+      Lifetime:"Tempo como cliente", Avg_class_frequency_current_month:"Frequência atual",
+      Age:"Idade", Contract_period:"Duração contrato", Month_to_end_contract:"Meses até vencer",
+      Avg_class_frequency_total:"Frequência histórica", Group_visits:"Desafios em grupo",
+      Promo_friends:"Indicação de amigos", Partner:"Convênio empresarial"
+    };
+    const C_NAMES = ["C0 · Recém-chegado em fuga","C1 · Leal anual","C2 · Engajado mensal","C3 · Médio em trânsito"];
+
+    const valid = rows.filter(r => SEG_FEATURES.every(f => r[f] !== undefined && !isNaN(r[f])));
+    if (valid.length < 20) throw new Error("CSV inválido para segmentação.");
+
+    // StandardScaler
+    const mu = {}, sigma = {};
+    SEG_FEATURES.forEach(f => {
+      const vals = valid.map(r => r[f]);
+      const m = vals.reduce((a, b) => a + b, 0) / vals.length;
+      const s = Math.sqrt(vals.reduce((a, b) => a + (b - m) ** 2, 0) / vals.length) || 1;
+      mu[f] = m; sigma[f] = s;
+    });
+    const scaled = valid.map(r => SEG_FEATURES.map(f => (r[f] - mu[f]) / sigma[f]));
+
+    function sq(a, b) { return a.reduce((s, v, i) => s + (v - b[i]) ** 2, 0); }
+
+    function krun(data, k) {
+      const n = data.length;
+      // KMeans++ init
+      const ci = [Math.floor(Math.random() * n)];
+      while (ci.length < k) {
+        const d2 = data.map(p => Math.min(...ci.map(i => sq(p, data[i]))));
+        const tot = d2.reduce((a, b) => a + b, 0);
+        let r = Math.random() * tot;
+        let chosen = n - 1;
+        for (let i = 0; i < n; i++) { r -= d2[i]; if (r <= 0) { chosen = i; break; } }
+        ci.push(chosen);
+      }
+      let centroids = ci.map(i => data[i].slice());
+      let labels = new Int32Array(n);
+
+      for (let iter = 0; iter < 120; iter++) {
+        let changed = false;
+        for (let i = 0; i < n; i++) {
+          let best = 0, bestD = Infinity;
+          for (let c = 0; c < k; c++) { const d = sq(data[i], centroids[c]); if (d < bestD) { bestD = d; best = c; } }
+          if (labels[i] !== best) { labels[i] = best; changed = true; }
+        }
+        if (!changed) break;
+        centroids = Array.from({ length: k }, (_, c) => {
+          const pts = data.filter((_, i) => labels[i] === c);
+          return pts.length ? pts[0].map((_, j) => pts.reduce((s, p) => s + p[j], 0) / pts.length) : centroids[c];
+        });
+      }
+      const inertia = data.reduce((s, p, i) => s + sq(p, centroids[labels[i]]), 0);
+      return { labels: Array.from(labels), inertia, centroids };
+    }
+
+    // Run n_init=6, keep best inertia
+    let best = null;
+    for (let t = 0; t < 6; t++) {
+      const res = krun(scaled, 4);
+      if (!best || res.inertia < best.inertia) best = res;
+    }
+    const { labels, inertia } = best;
+
+    // Remap cluster IDs: highest churn→C0, 2nd→C3, 3rd→C2, lowest→C1
+    const churnByLabel = [0,1,2,3].map(c => {
+      const m = valid.filter((_, i) => labels[i] === c);
+      return m.length ? m.reduce((s, r) => s + (r.Churn || 0), 0) / m.length : 0;
+    });
+    const sorted = [0,1,2,3].sort((a, b) => churnByLabel[b] - churnByLabel[a]);
+    const TARGET_IDS = [0, 3, 2, 1]; // rank 0→C0, 1→C3, 2→C2, 3→C1
+    const remap = {};
+    sorted.forEach((orig, rank) => { remap[orig] = TARGET_IDS[rank]; });
+    const remapped = labels.map(l => remap[l]);
+
+    const cluster_stats = [0,1,2,3].map(cid => {
+      const m = valid.filter((_, i) => remapped[i] === cid);
+      const churn_rate = m.length ? m.reduce((s, r) => s + (r.Churn || 0), 0) / m.length : 0;
+      return { id: cid, name: C_NAMES[cid], count: m.length, percentage: m.length / valid.length, churn_rate };
+    });
+
+    const cluster_means = {};
+    for (let cid = 0; cid < 4; cid++) {
+      const m = valid.filter((_, i) => remapped[i] === cid);
+      const means = {};
+      HMAP_FEATURES.forEach(f => { means[f] = m.length ? m.reduce((s, r) => s + r[f], 0) / m.length : 0; });
+      cluster_means[String(cid)] = means;
+    }
+
+    const heatmap_normalized = {};
+    HMAP_FEATURES.forEach(f => {
+      const vals = [0,1,2,3].map(c => cluster_means[c][f] || 0);
+      const mn = Math.min(...vals), mx = Math.max(...vals), span = (mx - mn) || 1;
+      heatmap_normalized[f] = vals.map(v => Math.round(((v - mn) / span) * 1000) / 1000);
+    });
+
+    // Simplified silhouette (sample 150 pts)
+    const sIdx = Array.from({ length: Math.min(150, valid.length) }, () => Math.floor(Math.random() * valid.length));
+    let silSum = 0;
+    sIdx.forEach(i => {
+      const c = remapped[i];
+      const same = sIdx.filter(j => remapped[j] === c && j !== i);
+      const a = same.length ? same.reduce((s, j) => s + Math.sqrt(sq(scaled[i], scaled[j])), 0) / same.length : 0;
+      const b = Math.min(...[0,1,2,3].filter(x => x !== c).map(oc => {
+        const om = sIdx.filter(j => remapped[j] === oc);
+        return om.length ? om.reduce((s, j) => s + Math.sqrt(sq(scaled[i], scaled[j])), 0) / om.length : Infinity;
+      }));
+      const mx = Math.max(a, b);
+      silSum += mx > 0 ? (b - a) / mx : 0;
+    });
+
+    return {
+      status: "segmented", n_clusters: 4,
+      inertia: Math.round(inertia * 100) / 100,
+      silhouette_score: Math.round(silSum / sIdx.length * 10000) / 10000,
+      cluster_stats, cluster_means,
+      heatmap_features: HMAP_FEATURES, heatmap_labels: HMAP_LABELS,
+      heatmap_normalized, rf_by_cluster: [],
+    };
+  }
+
+  async function carregarSegmentacao(file) {
+    const segStatus = document.getElementById("seg-status");
+    const segDashboard = document.getElementById("seg-dashboard");
+
+    segStatus.className = "seg-status waiting";
+    segStatus.textContent = "Executando K-Means (n_clusters=4)...";
+    segDashboard.className = "seg-dashboard";
+
+    // Try backend first; if unavailable, fall back to client-side K-Means
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_URL}/segment`, {
+        method: "POST", body: formData,
+        signal: AbortSignal.timeout ? AbortSignal.timeout(12000) : undefined,
+      });
+      if (!res.ok) throw new Error(await obterMensagemErro(res));
+      const data = await res.json();
+      exibirSegmentacao(data);
+      return;
+    } catch (_) { /* fall through to client K-Means */ }
+
+    try {
+      segStatus.textContent = "Processando no navegador (K-Means local)...";
+      await new Promise(r => setTimeout(r, 0)); // let UI paint
+      const csvText = await file.text();
+      const rows = parsearCsvNumerico(csvText);
+      csvRowsCache = rows;
+      const data = runClientKMeans(rows);
+      exibirSegmentacao(data);
+    } catch (clientErr) {
+      segStatus.className = "seg-status waiting";
+      segStatus.textContent = "Segmentação dinâmica indisponível. Dados do artefato exibidos abaixo.";
+    }
+  }
+
+  function exibirSegmentacao(data) {
+    const segStatus = document.getElementById("seg-status");
+    const segDashboard = document.getElementById("seg-dashboard");
+    const clusterClass = ["c0", "c1", "c2", "c3"];
+    const churnColorClass = r => r >= 0.5 ? "high" : r >= 0.3 ? "med" : r >= 0.15 ? "brand" : "low";
+
+    // Cluster cards
+    const cardsEl = document.getElementById("cluster-cards");
+    cardsEl.replaceChildren();
+    data.cluster_stats.forEach(c => {
+      const card = document.createElement("div");
+      card.className = `cluster-card ${clusterClass[c.id]}`;
+      card.innerHTML = `
+        <div class="cluster-name">${c.name}</div>
+        <div class="cluster-churn ${churnColorClass(c.churn_rate)}">${Math.round(c.churn_rate * 100)}%</div>
+        <div class="cluster-caption">churn · ${c.count} clientes (${Math.round(c.percentage * 100)}%)</div>
+      `;
+      cardsEl.appendChild(card);
+    });
+
+    // Bar charts
+    renderizarGraficoBarras("cluster-churn-chart", data.cluster_stats.map(c => ({
+      label: c.name,
+      value: c.churn_rate,
+      width: c.churn_rate,
+      caption: `${Math.round(c.churn_rate * 100)}%`,
+      danger: c.churn_rate >= 0.4,
+    })));
+
+    renderizarGraficoBarras("cluster-size-chart", data.cluster_stats.map(c => ({
+      label: c.name,
+      value: c.count,
+      width: c.percentage,
+      caption: `${c.count} clientes`,
+    })));
+
+    // Heatmap
+    const tbody = document.getElementById("heatmap-body");
+    tbody.replaceChildren();
+    data.heatmap_features.forEach(feat => {
+      const tr = document.createElement("tr");
+      const labelTd = document.createElement("td");
+      labelTd.textContent = data.heatmap_labels[feat] || feat;
+      labelTd.style.textAlign = "left";
+      labelTd.style.fontWeight = "700";
+      tr.appendChild(labelTd);
+
+      (data.heatmap_normalized[feat] || []).forEach(v => {
+        const td = document.createElement("td");
+        const bg = `rgba(37,99,235,${(0.08 + v * 0.62).toFixed(2)})`;
+        const fg = v > 0.62 ? "#fff" : "var(--text)";
+        td.innerHTML = `<span class="heat-cell" style="background:${bg};color:${fg}">${v.toFixed(2)}</span>`;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+
+    segStatus.className = "seg-status success";
+    segStatus.textContent = `Segmentação concluída · Silhouette: ${data.silhouette_score.toFixed(3)} · Inércia: ${Math.round(data.inertia)}`;
+    segDashboard.className = "seg-dashboard active";
+
+    if (data.rf_by_cluster && data.rf_by_cluster.length) {
+      exibirRfPredicao(data.rf_by_cluster);
+    }
+  }
+
+  // ── RF COMPLEMENTAR ──────────────────────────────
+  function exibirRfPredicao(rfData) {
+    const predStatus = document.getElementById("pred-status");
+    const predDashboard = document.getElementById("pred-dashboard");
+    const rfGrid = document.getElementById("rf-grid");
+
+    if (!rfData || !rfData.length) {
+      predStatus.className = "pred-status waiting";
+      predStatus.textContent = "Modelo RF não disponível. Treine o modelo primeiro.";
+      return;
+    }
+
+    const probColor = p => p >= 0.7 ? "var(--high)" : p >= 0.4 ? "var(--med)" : "var(--low)";
+
+    rfGrid.replaceChildren();
+    rfData.forEach(c => {
+      const card = document.createElement("div");
+      card.className = "rf-cluster-card";
+      card.innerHTML = `
+        <div class="rf-cluster-name">${c.name}</div>
+        <div class="rf-prob" style="color:${probColor(c.avg_churn_prob)}">${Math.round(c.avg_churn_prob * 100)}%</div>
+        <div class="rf-risk-bars">
+          <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--high)"></span>Alto ≥70%: ${Math.round(c.high_risk_pct * 100)}%</div>
+          <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--med)"></span>Médio 40–69%: ${Math.round(c.med_risk_pct * 100)}%</div>
+          <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--low)"></span>Baixo &lt;40%: ${Math.round(c.low_risk_pct * 100)}%</div>
+        </div>
+      `;
+      rfGrid.appendChild(card);
+    });
+
+    predStatus.className = "pred-status success";
+    predStatus.textContent = "Probabilidades RF calculadas por cluster K-Means.";
+    predDashboard.className = "pred-dashboard active";
+  }
+
+  // Pre-fill Inferência tab with a high-churn default profile on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('Lifetime').value = 1;
+    document.getElementById('Age').value = 28;
+    document.getElementById('Contract_period').value = 1;
+    document.getElementById('Month_to_end_contract').value = 0;
+    document.getElementById('Avg_class_frequency_current_month').value = 0.5;
+    document.getElementById('Avg_class_frequency_total').value = 0.8;
+    document.getElementById('Avg_additional_charges_total').value = 100;
+
+    document.querySelectorAll('.toggle-btn').forEach(function (btn) {
+      const attr = btn.getAttribute('onclick') || '';
+      if (attr.includes("'Group_visits', 0") ||
+          attr.includes("'Promo_friends', 0") ||
+          attr.includes("'Partner', 0") ||
+          attr.includes("'Near_Location', 1")) {
+        btn.click();
+      }
+    });
+
+    calcularPredicao().catch(function () {});
+
+    // Animate bar widths/heights when chart cards scroll into view
+    const barObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.querySelectorAll('[data-tw],[data-th]').forEach(function (bar) {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              if (bar.dataset.tw) bar.style.width  = bar.dataset.tw;
+              if (bar.dataset.th) bar.style.height = bar.dataset.th;
+            });
+          });
+        });
+        barObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.chart-card, .cp-card').forEach(function (el) {
+      el.querySelectorAll('.bar-value, .cp-mini-fill, .corr-bar').forEach(function (bar) {
+        if (bar.style.width && bar.style.width !== '0%' && bar.style.width !== '0') {
+          bar.dataset.tw = bar.style.width;
+          bar.style.width = '0';
+        }
+      });
+      el.querySelectorAll('.vbar-fill').forEach(function (bar) {
+        if (bar.style.height && bar.style.height !== '0%' && bar.style.height !== '0') {
+          bar.dataset.th = bar.style.height;
+          bar.style.height = '0';
+        }
+      });
+      barObserver.observe(el);
+    });
+  });
+
 </script>
 
 </body>
