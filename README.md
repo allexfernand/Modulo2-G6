@@ -1,118 +1,140 @@
-# Gym Churn Predictor — Semana 5
+# Vitaliza · Retenção Preditiva
 
-## Estrutura
+Sistema desenvolvido para a entrega do Módulo 2, com foco em análise exploratória de dados, modelo preditivo de churn e interface simples de inferência.
 
-```
-churn-project/
+## Links Da Entrega
+
+- Site publicado: https://modulo2-g6.vercel.app/
+- Repositório GitHub: https://github.com/allexfernand/Modulo2-G6
+- Backend Render: https://modulo2-g6.onrender.com
+- Documentação da API: https://modulo2-g6.onrender.com/docs
+- Notebook EDA: https://modulo2-g6.vercel.app/notebooks/eda_churn.ipynb
+- Relatório visual EDA: https://modulo2-g6.vercel.app/notebooks/eda_churn_visual.html
+
+Observação: o backend no Render pode levar alguns segundos para responder no primeiro acesso, caso o serviço esteja hibernado.
+
+## Objetivo Do Projeto
+
+O projeto estima o risco de churn de clientes de uma academia e traduz os sinais do modelo em ações de retenção. A solução combina:
+
+- Upload de CSV para treinamento dinâmico.
+- Dashboard EDA com visualizações exploratórias.
+- Modelo preditivo com RandomForest.
+- Interface de inferência para calcular probabilidade de churn.
+- Personas comportamentais com clusters K-Means para leitura de negócio.
+- Notebook e relatório visual como evidências formais da análise.
+
+## Como Acessar E Testar
+
+1. Acesse o site publicado: https://modulo2-g6.vercel.app/
+2. Entre na aba `Upload CSV`.
+3. Envie o arquivo `gym_churn_us.csv`.
+4. Aguarde o treinamento do modelo.
+5. Consulte as métricas de treino e o Dashboard EDA.
+6. Acesse a aba `Inferência` para informar dados de um cliente e calcular o risco de churn.
+7. Acesse a aba `Personas` para visualizar os clusters comportamentais K-Means.
+8. Acesse a aba `Documentação` para ver o resumo técnico, links do notebook e relatório visual.
+
+## Estrutura Do Repositório
+
+```text
+Modulo2-G6/
 ├── backend/
-│   ├── main.py            ← API FastAPI (deploy no Render)
-│   ├── train_model.py     ← script de treino (roda só local)
-│   ├── requirements.txt
-│   └── model.pkl          ← gerado pelo train_model.py (não sobe no git!)
+│   ├── main.py              # API FastAPI com treino, EDA e inferência
+│   ├── requirements.txt     # Dependências do backend
+│   ├── runtime.txt          # Versão do Python para deploy
+│   └── model.pkl            # Modelo base, quando disponível
 ├── frontend/
-│   └── index.html         ← interface (deploy na Vercel)
-└── dataset/
-    └── gym_churn_us.csv   ← sua base (não sobe no git!)
+│   └── index.html           # Interface web publicada na Vercel
+├── notebooks/
+│   ├── eda_churn.ipynb      # Notebook formal da EDA e modelo
+│   ├── eda_churn_visual.html
+│   ├── eda_churn_report.html
+│   └── gym_churn_us.csv     # Base usada na análise
+├── eda_report.md            # Insights acionáveis da EDA
+├── vercel.json              # Configuração de deploy do frontend
+└── README.md
 ```
 
----
+## Funcionalidades Principais
 
-## Passo a Passo
+- `Upload CSV`: treina o modelo no backend a partir da base enviada.
+- `Inferência`: calcula a probabilidade de churn para um cliente.
+- `Dashboard EDA`: mostra métricas, distribuição de churn, correlações, coortes, sobrevivência e segmentos diagnósticos.
+- `Personas`: apresenta os clusters K-Means com perfis comportamentais e ações recomendadas.
+- `Documentação`: resume arquitetura, features, interpretação do modelo e links dos artefatos formais.
 
-### 1. Organizar pastas localmente
+## Stack Técnica
 
-```
-mkdir dataset
-mv gym_churn_us.csv dataset/
-```
+- Frontend: HTML, CSS e JavaScript puro.
+- Backend: FastAPI.
+- Machine Learning: scikit-learn, RandomForestClassifier e K-Means na camada de negócio.
+- Dados e EDA: pandas, numpy e matplotlib.
+- Deploy frontend: Vercel.
+- Deploy backend: Render.
 
-### 2. Treinar o modelo
+## Endpoints Do Backend
+
+- `GET /`: health check da API.
+- `POST /train`: recebe CSV, limpa dados, treina o modelo e retorna métricas.
+- `POST /predict`: recebe dados de cliente e retorna probabilidade de churn.
+- `POST /eda`: recebe CSV e retorna dados agregados para o Dashboard EDA.
+- `GET /docs`: documentação interativa da API.
+
+## Métricas E Evidências
+
+O notebook `notebooks/eda_churn.ipynb` salva os outputs principais, incluindo:
+
+- Carga e limpeza da base.
+- Visualizações obrigatórias da EDA.
+- Features derivadas.
+- Métricas do modelo, incluindo ROC-AUC e classification report.
+- Segmentação comportamental K-Means.
+
+Na última execução salva no notebook:
+
+- ROC-AUC: `0.965`
+- Acurácia: `0.917`
+- Precisão classe churn: `0.865`
+- Recall classe churn: `0.816`
+
+## Features Utilizadas Pelo Modelo
+
+- `Lifetime`: meses como cliente.
+- `Avg_class_frequency_current_month`: frequência de aulas no mês atual.
+- `Age`: idade do cliente.
+- `Contract_period`: duração do contrato.
+- `Month_to_end_contract`: meses até o fim do contrato.
+- `Avg_class_frequency_total`: frequência histórica de aulas.
+- `Avg_additional_charges_total`: gastos extras na academia.
+- `Group_visits`: participação em aulas em grupo.
+- `Promo_friends`: entrada por indicação.
+- `Partner`: vínculo com empresa parceira.
+- `Near_Location`: proximidade da academia.
+
+## Personas K-Means
+
+A camada de negócio resume quatro perfis comportamentais:
+
+- Cluster 0, Lucas: recém-chegado em fuga, maior churn e necessidade de onboarding.
+- Cluster 1, Beatriz: leal anual, alta retenção e potencial de indicação.
+- Cluster 2, Rafael: engajado mensal, bom uso e oportunidade de migração para plano anual.
+- Cluster 3, Camila: médio em trânsito, risco diferido e necessidade de intervenção preventiva.
+
+## Execução Local
+
+Backend:
 
 ```bash
 cd backend
 pip install -r requirements.txt
-python train_model.py
-# gera model.pkl na pasta backend/
-```
-
-### 3. Testar a API localmente
-
-```bash
 uvicorn main:app --reload
-# Acesse http://localhost:8000/docs para ver e testar os endpoints
 ```
 
-### 4. Subir código pro GitHub
+Frontend:
 
-```bash
-git init
-git add backend/ frontend/
-git commit -m "feat: gym churn predictor semana 5"
-git remote add origin https://github.com/SEU_USER/SEU_REPO.git
-git push -u origin main
-```
+Abra `frontend/index.html` no navegador ou use um servidor estático local.
 
-> ⚠️ Não suba `dataset/` nem `model.pkl` — crie um `.gitignore`
+## Observações Para Avaliação
 
-### 5. Deploy do backend no Render
-
-1. Acesse https://render.com → New → Web Service
-2. Conecte o repositório GitHub
-3. Configure:
-   - **Root Directory:** `backend`
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Após o deploy, vá em **Shell** e rode:
-   ```bash
-   # upload do model.pkl via Render Shell (ou use Render Disk)
-   ```
-   Alternativa mais fácil: incluir o `model.pkl` no repositório mesmo.
-5. Copie a URL do serviço: `https://churn-api-xxxx.onrender.com`
-
-### 6. Conectar frontend à API
-
-Em `frontend/index.html`, linha 3 do script, troque:
-```js
-const API_URL = "https://SEU-PROJETO.onrender.com";
-```
-pela URL real do Render.
-
-### 7. Deploy do frontend na Vercel
-
-```bash
-npm i -g vercel
-cd frontend
-vercel
-# Segue as perguntas (Enter em tudo) → URL pronta em ~1 min
-```
-
----
-
-## .gitignore recomendado
-
-```
-model.pkl
-dataset/
-*.csv
-__pycache__/
-.env
-.vercel
-```
-
----
-
-## Features utilizadas (11)
-
-| Feature | Descrição |
-|---|---|
-| Lifetime | Meses como cliente |
-| Avg_class_frequency_current_month | Frequência de aulas esse mês |
-| Age | Idade do cliente |
-| Contract_period | Duração do contrato (meses) |
-| Month_to_end_contract | Meses até vencer o contrato |
-| Avg_class_frequency_total | Frequência histórica de aulas |
-| Avg_additional_charges_total | Gastos extras na academia |
-| Group_visits | Participa de aulas em grupo (0/1) |
-| Promo_friends | Veio por indicação (0/1) |
-| Partner | Empresa parceira (0/1) |
-| Near_Location | Mora perto da academia (0/1) |
+O site publicado é o principal ponto de demonstração. O GitHub contém o código-fonte completo, e os artefatos formais da análise estão disponíveis no notebook e no relatório visual vinculados na aba `Documentação`.
